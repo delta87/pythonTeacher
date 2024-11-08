@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Teacher</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 15px;
+            direction: rtl;
+            background-color: transparent;
+            color: var(--vscode-foreground);
+        }
+        h2 {
+            color: var(--vscode-sideBarTitle-foreground);
+            margin-bottom: 15px;
+            padding-right: 10px;
+        }
+        .lesson {
+            padding: 12px;
+            cursor: pointer;
+            border: 1px solid var(--vscode-sideBarSectionHeader-border);
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            background-color: var(--vscode-editor-background);
+            color: var(--vscode-foreground);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        .lesson:hover {
+            background-color: var(--vscode-list-hoverBackground);
+            transform: translateY(-2px);
+        }
+        .lesson-title {
+            flex-grow: 1;
+            font-size: 17px;
+        }
+        .lesson-number {
+            font-weight: bold;
+            color: var(--vscode-list-highlightForeground);
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>درس‌نامه‌ها</h2>
+    <div class="lesson" onclick="openLesson('pythonteacher.showExample')">
+        <span class="lesson-title">توضیحات</span>
+    </div>
+    <div class="lesson" onclick="openLesson('pythonteacher.showExample')">
+        <span class="lesson-title">متغیرها</span>
+    </div>
+    <div class="lesson" onclick="openLesson('pythonteacher.showDataTypes')">
+        <span class="lesson-title">انواع داده</span>
+    </div>
+    <div class="lesson" onclick="openLesson('pythonteacher.showConditionals')">
+        <span class="lesson-title">اعداد</span>
+    </div>
+    <div class="lesson" onclick="openLesson('pythonteacher.showConditionals')">
+        <span class="lesson-title">تبدیل انواع</span>
+    </div>
+    <div class="lesson" onclick="openLesson('pythonteacher.showConditionals')">
+        <span class="lesson-title">رشته ها</span>
+    </div>
+    <div class="lesson" onclick="openLesson('pythonteacher.showConditionals')">
+        <span class="lesson-title">عملگرها</span>
+    </div>
+    <div class="lesson" onclick="openLesson('pythonteacher.showConditionals')">
+        <span class="lesson-title">لیست ها</span>
+    </div>
+    <div class="lesson" onclick="openLesson('pythonteacher.showConditionals')">
+        <span class="lesson-title">تاپل ها</span>
+    </div>
+    <div class="lesson" onclick="openLesson('pythonteacher.showConditionals')">
+        <span class="lesson-title">مجموعه ها</span>
+    </div>
+    <div class="lesson" onclick="openLesson('pythonteacher.showConditionals')">
+        <span class="lesson-title">دیکشنری ها</span>
+    </div>
+    <div class="lesson" onclick="openLesson('pythonteacher.showConditionals')">
+        <span class="lesson-title">حلقه ها</span>
+    </div>
+    <div class="lesson" onclick="openLesson('pythonteacher.showConditionals')">
+        <span class="lesson-title">توابع</span>
+    </div>
+
+
+
+    <script>
+        const vscode = acquireVsCodeApi();
+        function openLesson(command) {
+            vscode.postMessage({ command: command });
+        }
+    </script>
+</body>
+</html>

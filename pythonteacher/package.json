@@ -1,43 +1,65 @@
 {
-  "name": "pythonteacher",
-  "displayName": "PythonTeacher",
-  "description": "The Python Teacher extension is your personal guide to mastering Python within Visual Studio Code. Perfect for beginners and intermediate learners alike, this extension brings interactive lessons, code challenges, and real-time feedback right to your editor.",
-  "version": "0.0.1",
-  "engines": {
-    "vscode": "^1.94.0"
-  },
-  "categories": [
-    "Other"
-  ],
-  "activationEvents": [],
-  "main": "./extension.js",
-  "contributes": {
-    "commands": [
-    {
-      "command": "pythonteacher.checkTask",
-      "title": "Check Python Task"
-  }  
-  ],
-    "keybindings": [
-        {
-            "command": "pythonteacher.helloWorld",
-            "key": "ctrl+alt+c",
-            "mac": "cmd+alt+c",
-            "when": "editorTextFocus"
-        }
-    ]
-  },
-  "scripts": {
-    "lint": "eslint .",
-    "pretest": "npm run lint",
-    "test": "vscode-test"
-  },
-  "devDependencies": {
-    "@types/vscode": "^1.94.0",
-    "@types/mocha": "^10.0.9",
-    "@types/node": "20.x",
-    "eslint": "^9.13.0",
-    "@vscode/test-cli": "^0.0.10",
-    "@vscode/test-electron": "^2.4.1"
-  }
+    "name": "pythonteacher",
+    "displayName": "PythonTeacher",
+    "description": "The Python Teacher extension is your personal guide to mastering Python within Visual Studio Code. Perfect for beginners and intermediate learners alike, this extension brings interactive lessons, code challenges, and real-time feedback right to your editor.",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.94.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [],
+    "main": "./extension.js",
+    "contributes": {
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "pythonTeacherSidebar",
+                    "title": "Python Teacher",
+                    "icon": "resources/icon.png"
+                }
+            ]
+        },
+        "views": {
+            "pythonTeacherSidebar": [
+                {
+                    "id": "pythonTeacherSidebar",
+                    "name": "Python Teacher",
+                    "type": "webview"
+                }
+            ]
+        },
+        "commands": [
+            {
+                "command": "pythonteacher.checkTask",
+                "title": "Check Python Task"
+            },
+            {
+                "command": "pythonteacher.showExample",
+                "title": "Python Teacher: Show Variable Initialization Example"
+            }
+        ],
+        "keybindings": [
+            {
+                "command": "pythonteacher.helloWorld",
+                "key": "ctrl+alt+c",
+                "mac": "cmd+alt+c",
+                "when": "editorTextFocus"
+            }
+        ]
+    },
+    "scripts": {
+        "lint": "eslint .",
+        "pretest": "npm run lint",
+        "test": "vscode-test"
+    },
+    "devDependencies": {
+        "@types/vscode": "^1.94.0",
+        "@types/mocha": "^10.0.9",
+        "@types/node": "20.x",
+        "eslint": "^9.13.0",
+        "@vscode/test-cli": "^0.0.10",
+        "@vscode/test-electron": "^2.4.1"
+    }
 }

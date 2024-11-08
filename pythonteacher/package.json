@@ -36,6 +36,10 @@
                 "title": "Check Python Task"
             },
             {
+                "command": "pythonteacher.openLessonFile",
+                "title": "Open Lesson File"
+            },
+            {
                 "command": "pythonteacher.showExample",
                 "title": "Python Teacher: Show Variable Initialization Example"
             }

@@ -36,6 +36,10 @@
                 "title": "Check Python Task"
             },
             {
+                "command": "pythonteacher.validateCode",
+                "title": "validate Code"
+            },
+            {
                 "command": "pythonteacher.openLessonFile",
                 "title": "Open Lesson File"
             },

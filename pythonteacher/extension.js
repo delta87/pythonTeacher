@@ -1,5 +1,7 @@
 const vscode = require('vscode');
 const SideBarViewProvider = require('./src/sideBar');
+const { task1, task2 } = require('./tasks/all_tasks.js');
+
 
 function activate(context) {
     context.subscriptions.push(
@@ -9,12 +11,19 @@ function activate(context) {
     context.subscriptions.push(
         vscode.commands.registerCommand('pythonteacher.openLessonFile', (lessonTitle) => {
             vscode.workspace.openTextDocument({ language: 'python' }).then(doc => {
-                
+                var question;
+                switch (lessonTitle) {
+                    case 'Variables':
+                        question = task1.question;
+                        break;    
+                    case 'DataTypes':
+                        question = task2.question;
+                        break;
+                }
+
                 vscode.window.showTextDocument(doc).then(editor => {
                     editor.edit(editBuilder => {
-                        // TODO
-                        // Add lesson task at the beginning of the file
-                        editBuilder.insert(new vscode.Position(0, 0), `# Lesson Task: ${lessonTitle}\n#\n\n`);
+                        editBuilder.insert(new vscode.Position(0, 0), `# Lesson Task: ${lessonTitle}\n# ${question}\n\n`);
                     });
                     // Show the validation button for this specific lesson
                     showValidationButton(lessonTitle);
@@ -23,53 +32,67 @@ function activate(context) {
         })
     );
 
+    let currentValidationButton = null;       // Track the current button
+    let validateCommand = null;               // Track the command registration
 
-    context.subscriptions.push(
-        vscode.commands.registerCommand('pythonteacher.validateCode', (lessonTitle) => {
+    function showValidationButton(lessonTitle) {
+        // Dispose of the old button if it exists
+        if (currentValidationButton) {
+            currentValidationButton.dispose();
+        }
+
+        // Create a new status bar item for the validation button
+        const button = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+        button.text = `✔️ Validate ${lessonTitle}`;  // Display lesson-specific text
+        button.command = 'pythonteacher.validateCode';  // Set the validation command string
+        button.tooltip = `Click to validate the Python code for ${lessonTitle}`;  // Tooltip with lesson-specific info
+        button.show();  // Display the button in the status bar
+
+        // Store the new button reference
+        currentValidationButton = button;
+
+        // Unregister the previous command if it exists
+        if (validateCommand) {
+            validateCommand.dispose();
+        }
+
+        // Register the command and store the registration so it can be disposed of later
+        validateCommand = vscode.commands.registerCommand('pythonteacher.validateCode', () => {
             const editor = vscode.window.activeTextEditor;
             if (editor) {
                 const code = editor.document.getText();
 
-                // Sample validation logic based on lesson title
-                const isValid = validatePythonCode(code, lessonTitle);
-                if (isValid) {
-                    vscode.window.showInformationMessage(`✅ ${lessonTitle} code is correct!`);
-                } else {
-                    vscode.window.showInformationMessage(`❌ ${lessonTitle} code validation failed.`);
-                }
+                validatePythonCode(code, lessonTitle, (score) => {
+                    if (score === 100) {
+                        vscode.window.showInformationMessage(`✅  Perfect! ${score}/100`);
+                    } else if (score > 0 && score < 100) {
+                        vscode.window.showInformationMessage(`⚠️  Some issues found. ${score}/100`);
+                    } else {
+                        vscode.window.showInformationMessage(`❌  Validation failed. ${score}/100`);
+                    }
+                });
             }
-        })
-    );
+        });
 
-    function showValidationButton(lessonTitle) {
-        // Create a status bar item for the floating validation button
-        const button = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-        button.text = `✔️ Validate ${lessonTitle}`;  // Display lesson-specific text
-        button.command = "pythonteacher.validateCode";  // Set the validation command
-        button.tooltip = `Click to validate the Python code for ${lessonTitle}`;  // Tooltip with lesson-specific info
-        button.show();  // Display the button in the status bar
-
-        // Dispose of the button when the editor is closed
-        context.subscriptions.push(button);
+        // Add both button and command to the context subscriptions
+        context.subscriptions.push(button, validateCommand);
     }
 
+
     // Sample validation logic, adjusted for lesson-specific validation
-    function validatePythonCode(code, lessonTitle) {
+    function validatePythonCode(code, lessonTitle, callback) {
         // Adjust validation logic based on the lesson title
         switch (lessonTitle) {
             case 'Variables':
-                // Add validation logic for the Variables lesson
-                if (!code.includes('=') || code.split('=').length !== 2) {
-                    return 'Variable assignment seems incorrect. Make sure you are assigning a value to a variable.';
-                }
+                task1.validateCode(code, (result) => {
+                    callback(result)})
                 break;
-    
+
             case 'DataTypes':
-                // Add validation logic for the Data Types lesson
-                if (!/^(int|float|str|list|tuple|dict|set)$/.test(code)) {
-                    return 'Please use a valid data type like int, float, str, list, tuple, dict, or set.';
-                }
+                task2.validateCode(code, (result) => {
+                    callback(result)})
                 break;
+                
     
             case 'TypeCasting':
                 // Add validation logic for Type Casting lesson

@@ -11,7 +11,6 @@ class SideBarViewProvider {
         webviewView.webview.options = {
             enableScripts: true
         };
-
         try {
             // Attempt to load the HTML content from the external file
             webviewView.webview.html = this.getHtmlForWebview(webviewView.webview);
@@ -22,8 +21,8 @@ class SideBarViewProvider {
 
         webviewView.webview.onDidReceiveMessage(message => {
             switch (message.command) {
-                case 'openLesson':
-                    vscode.commands.executeCommand(message.command);
+                case 'pythonteacher.openLessonFile':
+                    vscode.commands.executeCommand(message.command, message.lessonTitle);
                     break;
             }
         });
@@ -31,11 +30,9 @@ class SideBarViewProvider {
 
     getHtmlForWebview(webview) {
         const htmlPath = path.join(this.context.extensionPath, 'src/pages/sideBar.html');
-        
         if (!fs.existsSync(htmlPath)) {
             throw new Error(`HTML file not found at path: ${htmlPath}`);
         }
-
         return fs.readFileSync(htmlPath, 'utf8');
     }
 }

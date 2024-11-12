@@ -19,6 +19,7 @@ function activate(context) {
                     case 'DataTypes':
                         question = task2.question;
                         break;
+
                 }
 
                 vscode.window.showTextDocument(doc).then(editor => {
@@ -94,12 +95,9 @@ function activate(context) {
                 break;
                 
     
-            case 'TypeCasting':
-                // Add validation logic for Type Casting lesson
-                if (!code.includes('int(') && !code.includes('float(') && !code.includes('str(')) {
-                    return 'Please use a type casting function like int(), float(), or str() for conversion.';
-                }
+            case 'TypeCasting':    
                 break;
+                
     
             case 'Strings':
                 // Add validation logic for Strings lesson

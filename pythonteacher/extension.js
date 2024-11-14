@@ -1,6 +1,6 @@
 const vscode = require('vscode');
 const SideBarViewProvider = require('./src/sideBar');
-const { task1, task2 } = require('./tasks/all_tasks.js');
+const { task1, task2, task3, task4 } = require('./tasks/all_tasks.js');
 
 function activate(context) {
     const documentLessonMap = new Map();  // Map to store each document's lessonTitle
@@ -25,6 +25,12 @@ function activate(context) {
                         break;    
                     case 'DataTypes':
                         question = task2.question;
+                        break;
+                    case 'TypeCasting':
+                        question = task3.question;
+                        break;
+                    case 'IfStatement':
+                        question = task4.question;
                         break;
                 }
 
@@ -89,6 +95,12 @@ function activate(context) {
                 break;
             case 'DataTypes':
                 task2.validateCode(code, callback);
+                break;
+            case 'TypeCasting':
+                task3.validateCode(code, callback);
+                break;
+            case 'IfStatement':
+                task4.validateCode(code, callback);
                 break;
             // Add other cases as needed
             default:

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fa">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Python Teacher</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 15px;
+        direction: rtl;
+        background-color: transparent;
+        color: var(--vscode-foreground);
+      }
+      h2 {
+        color: var(--vscode-sideBarTitle-foreground);
+        margin-bottom: 15px;
+        padding-right: 10px;
+      }
+      .lesson {
+        padding: 12px;
+        cursor: pointer;
+        border: 1px solid var(--vscode-sideBarSectionHeader-border);
+        margin-bottom: 10px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        background-color: var(--vscode-editor-background);
+        color: var(--vscode-foreground);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s, transform 0.1s;
+      }
+      .lesson:hover {
+        background-color: var(--vscode-list-hoverBackground);
+        transform: translateY(-2px);
+      }
+      .lesson-title {
+        flex-grow: 1;
+        font-size: 17px;
+      }
+      .lesson-number {
+        font-weight: bold;
+        color: var(--vscode-list-highlightForeground);
+        margin-left: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>درس‌نامه‌ها</h2>
+    <div class="lesson" onclick="openLesson('Variables')">
+      <span class="lesson-title">متغیرها (Variables)</span>
+    </div>
+    <div class="lesson" onclick="openLesson('DataTypes')">
+      <span class="lesson-title">انواع داده (Data Types)</span>
+    </div>
+    <div class="lesson" onclick="openLesson('TypeCasting')">
+      <span class="lesson-title">تبدیل انواع (Type Casting)</span>
+    </div>
+    <div class="lesson" onclick="openLesson('Strings')">
+      <span class="lesson-title">رشته (Strings)</span>
+    </div>
+    <div class="lesson" onclick="openLesson('Operators')">
+      <span class="lesson-title">عملگرها (Operators)</span>
+    </div>
+    <div class="lesson" onclick="openLesson('Lists')">
+      <span class="lesson-title">لیست (Lists)</span>
+    </div>
+    <div class="lesson" onclick="openLesson('Tuples')">
+      <span class="lesson-title">تاپل (Tuples)</span>
+    </div>
+    <div class="lesson" onclick="openLesson('Sets')">
+      <span class="lesson-title">مجموعه (Sets)</span>
+    </div>
+    <div class="lesson" onclick="openLesson('Dictionaries')">
+      <span class="lesson-title">دیکشنری (Dictionaries)</span>
+    </div>
+    <div class="lesson" onclick="openLesson('Loops')">
+      <span class="lesson-title">حلقه‌ها (Loops)</span>
+    </div>
+    <div class="lesson" onclick="openLesson('Functions')">
+      <span class="lesson-title">توابع (Functions)</span>
+    </div>
+    <script>
+      const vscode = acquireVsCodeApi();
+
+      function openLesson(command) {
+        vscode.postMessage({
+          command: "pythonteacher.openLessonFile",
+          lessonTitle: command,
+        });
+      }
+    </script>
+  </body>
+</html>

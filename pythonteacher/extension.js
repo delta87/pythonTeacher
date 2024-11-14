@@ -2,10 +2,17 @@ const vscode = require('vscode');
 const SideBarViewProvider = require('./src/sideBar');
 const { task1, task2 } = require('./tasks/all_tasks.js');
 
-
 function activate(context) {
+    const documentLessonMap = new Map();  // Map to store each document's lessonTitle
+
     context.subscriptions.push(
         vscode.window.registerWebviewViewProvider('pythonTeacherSidebar', new SideBarViewProvider(context))
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('pythonteacher.openSidebar', () => {
+            vscode.commands.executeCommand('workbench.view.extension.pythonTeacherSidebar');
+        })
     );
 
     context.subscriptions.push(
@@ -19,8 +26,10 @@ function activate(context) {
                     case 'DataTypes':
                         question = task2.question;
                         break;
-
                 }
+
+                // Associate this document with the lesson
+                documentLessonMap.set(doc.uri.toString(), lessonTitle);
 
                 vscode.window.showTextDocument(doc).then(editor => {
                     editor.edit(editBuilder => {
@@ -37,28 +46,23 @@ function activate(context) {
     let validateCommand = null;               // Track the command registration
 
     function showValidationButton(lessonTitle) {
-        // Dispose of the old button if it exists
         if (currentValidationButton) {
             currentValidationButton.dispose();
         }
 
-        // Create a new status bar item for the validation button
         const button = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-        button.text = `✔️ Validate ${lessonTitle}`;  // Display lesson-specific text
-        button.command = 'pythonteacher.validateCode';  // Set the validation command string
-        button.tooltip = `Click to validate the Python code for ${lessonTitle}`;  // Tooltip with lesson-specific info
-        button.show();  // Display the button in the status bar
+        button.text = `✔️ Validate ${lessonTitle}`;
+        button.command = `pythonteacher.validateCode.${lessonTitle}`;
+        button.tooltip = `Click to validate the Python code for ${lessonTitle}`;
+        button.show();
 
-        // Store the new button reference
         currentValidationButton = button;
 
-        // Unregister the previous command if it exists
         if (validateCommand) {
             validateCommand.dispose();
         }
 
-        // Register the command and store the registration so it can be disposed of later
-        validateCommand = vscode.commands.registerCommand('pythonteacher.validateCode', () => {
+        validateCommand = vscode.commands.registerCommand(`pythonteacher.validateCode.${lessonTitle}`, () => {
             const editor = vscode.window.activeTextEditor;
             if (editor) {
                 const code = editor.document.getText();
@@ -75,94 +79,36 @@ function activate(context) {
             }
         });
 
-        // Add both button and command to the context subscriptions
         context.subscriptions.push(button, validateCommand);
     }
 
-
-    // Sample validation logic, adjusted for lesson-specific validation
     function validatePythonCode(code, lessonTitle, callback) {
-        // Adjust validation logic based on the lesson title
         switch (lessonTitle) {
             case 'Variables':
-                task1.validateCode(code, (result) => {
-                    callback(result)})
+                task1.validateCode(code, callback);
                 break;
-
             case 'DataTypes':
-                task2.validateCode(code, (result) => {
-                    callback(result)})
+                task2.validateCode(code, callback);
                 break;
-                
-    
-            case 'TypeCasting':    
-                break;
-                
-    
-            case 'Strings':
-                // Add validation logic for Strings lesson
-                if (!code.includes('"') && !code.includes("'")) {
-                    return 'Strings should be enclosed in quotes, either single or double.';
-                }
-                break;
-    
-            case 'Operators':
-                // Add validation logic for Operators lesson
-                if (!/[+\-*/]/.test(code)) {
-                    return 'Please use an operator like +, -, *, or / in your code.';
-                }
-                break;
-    
-            case 'Lists':
-                // Add validation logic for Lists lesson
-                if (!code.includes('[') || !code.includes(']')) {
-                    return 'A list should be defined with square brackets [].';
-                }
-                break;
-    
-            case 'Tuples':
-                // Add validation logic for Tuples lesson
-                if (!code.includes('(') || !code.includes(')')) {
-                    return 'A tuple should be defined with parentheses ().';
-                }
-                break;
-    
-            case 'Sets':
-                // Add validation logic for Sets lesson
-                if (!code.includes('{') || !code.includes('}')) {
-                    return 'A set should be defined with curly braces {}.';
-                }
-                break;
-    
-            case 'Dictionaries':
-                // Add validation logic for Dictionaries lesson
-                if (!code.includes(':')) {
-                    return 'A dictionary should use a colon (:) to separate keys and values.';
-                }
-                break;
-    
-            case 'Loops':
-                // Add validation logic for Loops lesson
-                if (!/for\s+\w+\s+in\s+\w+/.test(code) && !/while\s+\w+/.test(code)) {
-                    return 'Loops should be defined using for or while syntax.';
-                }
-                break;
-    
-            case 'Functions':
-                // Add validation logic for Functions lesson
-                if (!code.includes('def ')) {
-                    return 'Functions should be defined using the "def" keyword.';
-                }
-                break;
-    
+            // Add other cases as needed
             default:
-                // Default case if lessonTitle doesn't match
-                return 'Unknown lesson. Please select a valid lesson to validate the code.';
+                callback(0); // Default to zero if lessonTitle doesn't match
         }
-    
-        // If all validations pass, return true
-        return true;
     }
+
+    // Listen for changes in the active editor to update the validation button
+    vscode.window.onDidChangeActiveTextEditor(editor => {
+        if (editor) {
+            const lessonTitle = documentLessonMap.get(editor.document.uri.toString());
+            if (lessonTitle) {
+                showValidationButton(lessonTitle);
+            } else if (currentValidationButton) {
+                currentValidationButton.hide();  // Hide button if no lesson is associated
+            }
+        }
+    });
+
+    context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor);
 }
 
 function deactivate() {}
@@ -171,7 +117,3 @@ module.exports = {
     activate,
     deactivate
 };
-
-
-
-

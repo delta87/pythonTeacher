@@ -17,7 +17,7 @@
                 {
                     "id": "pythonTeacherSidebar",
                     "title": "Python Teacher",
-                    "icon": "resources/icon.png"
+                    "icon": "./assets/t.svg"
                 }
             ]
         },

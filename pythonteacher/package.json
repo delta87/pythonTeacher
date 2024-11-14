@@ -32,10 +32,6 @@
         },
         "commands": [
             {
-                "command": "pythonteacher.checkTask",
-                "title": "Check Python Task"
-            },
-            {
                 "command": "pythonteacher.validateCode",
                 "title": "validate Code"
             },
@@ -44,17 +40,18 @@
                 "title": "Open Lesson File"
             },
             {
-                "command": "pythonteacher.showExample",
-                "title": "Python Teacher: Show Variable Initialization Example"
+              "command": "pythonteacher.openSidebar",
+              "title": "Open Python Teacher Sidebar"
             }
         ],
         "keybindings": [
-            {
-                "command": "pythonteacher.helloWorld",
-                "key": "ctrl+alt+c",
-                "mac": "cmd+alt+c",
-                "when": "editorTextFocus"
-            }
+          {
+            "command": "pythonteacher.openSidebar",
+            "key": "ctrl+alt+l",
+            "mac": "cmd+alt+l",
+            "when": "editorTextFocus"
+        }        
+            
         ]
     },
     "scripts": {

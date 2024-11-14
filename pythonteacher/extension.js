@@ -4,8 +4,16 @@ const { task1, task2 } = require('./tasks/all_tasks.js');
 
 
 function activate(context) {
+    
+    
     context.subscriptions.push(
         vscode.window.registerWebviewViewProvider('pythonTeacherSidebar', new SideBarViewProvider(context))
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('pythonteacher.openSidebar', () => {
+            vscode.commands.executeCommand('workbench.view.extension.pythonTeacherSidebar');
+        })
     );
 
     context.subscriptions.push(

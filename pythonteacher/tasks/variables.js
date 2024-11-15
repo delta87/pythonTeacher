@@ -38,6 +38,7 @@ if full_name != (first_name + " " + last_name):
                     resolve();
                 });
             }),
+            console.log(code + extraCode)
         ];
 
         // Wait for all promises to resolve

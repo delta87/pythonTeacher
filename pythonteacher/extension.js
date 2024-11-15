@@ -1,6 +1,6 @@
 const vscode = require('vscode');
 const SideBarViewProvider = require('./src/sideBar');
-const { task1, task2, task3, task4, task5 } = require('./tasks/all_tasks.js');
+const { task1, task2, task3, task4, task5, task6 } = require('./tasks/all_tasks.js');
 const { exec } = require('child_process');
 
 function checkPythonInstallation() {
@@ -45,6 +45,9 @@ function activate(context) {
                         break;
                     case 'Strings':
                         question = task5.question;
+                        break;
+                    case 'Lists':
+                        question = task6.question;
                         break;
                 }
 
@@ -118,6 +121,9 @@ function activate(context) {
                 break;
             case 'Strings':
                 task5.validateCode(code, callback);
+                break;
+            case 'Lists':
+                task6.validateCode(code, callback);
                 break;
 
     

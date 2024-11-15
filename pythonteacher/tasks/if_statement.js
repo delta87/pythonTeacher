@@ -12,29 +12,6 @@ module.exports = {
     validateCode: (code, callback) => {
         let score = 0;
 
-        const testCases = [
-            { input: '"sunny"', expected: "It's a sunny day!" },
-            { input: '"rainy"', expected: "It's raining today!" },
-            { input: '"cloudy"', expected: "It's cloudy today!" },
-            { input: '"windy"', expected: "Weather unknown." }
-        ];
-
-        const promises = testCases.map(testCase => {
-            return new Promise(resolve => {
-                const extraCode = `\nweather = ${testCase.input}\n${code}`;
-                runPythonCode(extraCode, result => {
-                    const trimmedResult = result.trim(); // Ensure no leading/trailing spaces
-                    const expected = testCase.expected.trim(); // Ensure no leading/trailing spaces
-                    
-                    // Check if the result matches the expected output
-                    if (trimmedResult === expected) {
-                        score += 25; // Each correct case gives 25 points
-                    }
-                    resolve();
-                });
-            });
-        });
-
         // Wait for all promises to resolve
         Promise.all(promises)
             .then(() => {

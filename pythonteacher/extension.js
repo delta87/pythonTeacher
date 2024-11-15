@@ -1,8 +1,19 @@
 const vscode = require('vscode');
 const SideBarViewProvider = require('./src/sideBar');
 const { task1, task2 } = require('./tasks/all_tasks.js');
+const { exec } = require('child_process');
+
+function checkPythonInstallation() {
+    exec('python --version', (error, stdout, stderr) => {
+        if (error) {
+            vscode.window.showWarningMessage('برای استفاده از افزونه آموزشیار پایتون فارسی، لطفاً پایتون را روی سیستم خود نصب کنید.');
+        }
+    });
+}
 
 function activate(context) {
+    checkPythonInstallation();
+    
     const documentLessonMap = new Map();  // Map to store each document's lessonTitle
 
     context.subscriptions.push(

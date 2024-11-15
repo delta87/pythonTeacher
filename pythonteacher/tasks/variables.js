@@ -1,49 +1,53 @@
 const runPythonCode = require('../src/pythonRunner');
 
 module.exports = {
-    question: "Define a variable 'x' and assign the integer value '10' to it. Then, print the value of 'x' to the console.",
+    question: `Define two variables, \`first_name\` and \`last_name\`, and assign your first and last name as strings to them. Then, concatenate the two variables with a space in between and print the result.`,
+
     validateCode: (code, callback) => {
         let score = 0;
 
-        // Create an array of promises
+        // Array of promises for validation
         const promises = [
+            // Validate if `first_name` is a string
             new Promise((resolve) => {
-                let extraCode = `\nif not isinstance(x, int):\n    raise ValueError()`;
-                code += extraCode
-                runPythonCode(code, (status, output) => {
-                    if (status == 0) score += 33;
-                    resolve();  // Resolve after updating score
+                let extraCode = `\nif not isinstance(first_name, str):\n    raise ValueError("first_name is not a string")`;
+                runPythonCode(code + extraCode, (status) => {
+                    if (status == 0) score += 25;
+                    resolve();
                 });
             }),
+            // Validate if `last_name` is a string
             new Promise((resolve) => {
-                let extraCode = `\nif x != 10:\n    raise ValueError()`
-                code += extraCode
-                runPythonCode(code, (status, output) => {
-                    if (status == 0) score += 33;
-                    resolve();  // Resolve after updating score
+                let extraCode = `\nif not isinstance(last_name, str):\n    raise ValueError("last_name is not a string")`;
+                runPythonCode(code + extraCode, (status) => {
+                    if (status == 0) score += 25;
+                    resolve();
                 });
             }),
+            // Validate the concatenation and print result
             new Promise((resolve) => {
-                runPythonCode(code, (status, output) => {
-                    if (status == 0) {
-                        if (output.trim() === '10') score += 34;
-                        resolve();
+                let extraCode = `
+full_name = first_name + " " + last_name
+if full_name != (first_name + " " + last_name):
+    raise ValueError("Concatenation is incorrect")
+`;
+                runPythonCode(code + extraCode, (status, output) => {
+                    if (status == 0 && output.trim() === `${"John Doe"}`) {
+                        score += 50; // Concatenation validation gets the most weight
                     }
-                    resolve();  // Resolve after updating score
+                    resolve();
                 });
             }),
-
         ];
+
         // Wait for all promises to resolve
         Promise.all(promises)
             .then(() => {
-                // Now you can return the updated score through the callback
-                callback(score);
+                callback(score); // Return total score after all checks
             })
             .catch((error) => {
-                // Handle any error that occurs during the promises
                 console.error("Error during validation:", error);
-                callback(0);  // Return 0 if there's an error
+                callback(0); // Return 0 if there's an error
             });
-    }
+    },
 };

@@ -1,55 +1,55 @@
 const runPythonCode = require('../src/pythonRunner');
 
 module.exports = {
-    question: `Create a dictionary called \`my_dict\` with at least two key-value pairs where the keys are strings and the values are integers. Then, add a new key-value pair \`"age": 30\` to the dictionary, and print the updated dictionary.`,
+    question: `Define a dictionary named \`my_dict\` with the following key-value pairs: "name" as "Alice", "age" as 30, and "city" as "New York". Then, add a new key-value pair: "country" as "USA". Finally, print the updated dictionary.`,
 
     validateCode: (code, callback) => {
         let score = 0;
 
-        // Array of promises for validation
         const promises = [
-            // Check if `my_dict` is a dictionary
+            // Check if the dictionary is defined with the initial key-value pairs
             new Promise((resolve) => {
-                let extraCode = `
+                const extraCode = `
 if not isinstance(my_dict, dict):
     raise ValueError("my_dict is not a dictionary")
+if my_dict != {"name": "Alice", "age": 30, "city": "New York"}:
+    raise ValueError("my_dict does not have the correct initial values")
 `;
                 runPythonCode(code + extraCode, (status) => {
-                    if (status === 0) score += 30; // Add 30 points if my_dict is a dictionary
+                    if (status === 0) score += 40; // Add 40 points for correct initial dictionary
                     resolve();
                 });
             }),
 
-            // Check if `my_dict` has at least two valid key-value pairs
+            // Check if the new key-value pair was added
             new Promise((resolve) => {
-                let extraCode = `
-if len(my_dict) < 2:
-    raise ValueError("my_dict does not have at least two key-value pairs")
-if not all(isinstance(k, str) and isinstance(v, int) for k, v in my_dict.items()):
-    raise ValueError("Keys must be strings and values must be integers")
-`;
-                runPythonCode(code + extraCode, (status) => {
-                    if (status === 0) score += 30; // Add 30 points if key-value pairs are valid
-                    resolve();
-                });
-            }),
-
-            // Validate appending `"age": 30` and output
-            new Promise((resolve) => {
-                let extraCode = `
-my_dict["age"] = 30
+                const extraCode = `
+my_dict["country"] = "USA"
+if my_dict.get("country") != "USA":
+    raise ValueError("Key 'country' was not added with the value 'USA'")
 print(my_dict)
 `;
                 runPythonCode(code + extraCode, (status, output) => {
                     if (status === 0) {
-                        try {
-                            const parsedOutput = JSON.parse(output.replace(/'/g, '"')); // Handle Python's single quotes
-                            if (parsedOutput["age"] === 30) {
-                                score += 40; // Add 40 points if "age": 30 is added
-                            }
-                        } catch (err) {
-                            console.error("Failed to parse output:", err);
+                        const expectedPart = `'country': 'USA'`; // Check if the output contains the new pair
+                        if (output.includes(expectedPart)) {
+                            score += 50; // Add 50 points for correct addition and output
                         }
+                    }
+                    resolve();
+                });
+            }),
+
+            // Check if the dictionary prints correctly
+            new Promise((resolve) => {
+                runPythonCode(code, (status, output) => {
+                    const normalizedOutput = output.trim().replace(/\s+/g, ' '); // Normalize whitespace
+                    const expectedOutput = `{'name': 'Alice', 'age': 30, 'city': 'New York', 'country': 'USA'}`.replace(/\s+/g, ' ');
+
+                    if (status === 0 && normalizedOutput === expectedOutput) {
+                        score += 10; // Add 10 points for correct final output
+                    } else {
+                        console.error("Output mismatch. Expected:\n", expectedOutput, "\nGot:\n", normalizedOutput);
                     }
                     resolve();
                 });
@@ -59,11 +59,11 @@ print(my_dict)
         // Wait for all promises to resolve
         Promise.all(promises)
             .then(() => {
-                (score); // Return the total score
+                callback(score); // Return the final score
             })
             .catch((error) => {
                 console.error("Error during validation:", error);
-                callback(0); // Return 0 in case of an error
+                callback(0); // Return 0 if there's an error
             });
     },
 };

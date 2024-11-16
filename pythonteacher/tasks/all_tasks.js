@@ -6,8 +6,9 @@ const task5 = require('./strings.js')
 const task6 = require('./Lists.js')
 const task7 = require('./dictionary.js')
 const task8 = require('./for_loop.js')
+const task9 = require('./functions.js')
 // const task5 = req
 
 module.exports = {
-    task1, task2, task3, task4, task5, task6, task7, task8
+    task1, task2, task3, task4, task5, task6, task7, task8, task9
 };

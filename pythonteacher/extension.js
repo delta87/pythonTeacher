@@ -1,6 +1,6 @@
 const vscode = require('vscode');
 const SideBarViewProvider = require('./src/sideBar');
-const { task1, task2, task3, task4, task5, task6, task7, task8 } = require('./tasks/all_tasks.js');
+const { task1, task2, task3, task4, task5, task6, task7, task8, task9 } = require('./tasks/all_tasks.js');
 const { exec } = require('child_process');
 
 function checkPythonInstallation() {
@@ -54,6 +54,9 @@ function activate(context) {
                         break;
                     case 'ForLoop':
                         question = task8.question;
+                        break;
+                    case 'Functions':
+                        question = task9.question;
                         break;
                 }
 
@@ -137,6 +140,8 @@ function activate(context) {
             case 'ForLoop':
                 task8.validateCode(code, callback);
                 break;
+            case 'Functions':
+                task9.validateCode(code, callback)
             // Add other cases as needed
             default:
                 callback(0); // Default to zero if lessonTitle doesn't match

@@ -9,29 +9,45 @@ module.exports = {
         const promises = [
             new Promise((resolve) => {
                 let extraCode = `\nif not isinstance(x, int):\n    raise ValueError()`;
-                code += extraCode
-                runPythonCode(code, (status, output) => {
-                    if (status == 0) score += 33;
-                    resolve();  // Resolve after updating score
-                });
-            }),
-            new Promise((resolve) => {
-                let extraCode = `\nif x != 10:\n    raise ValueError()`
-                code += extraCode
-                runPythonCode(code, (status, output) => {
-                    if (status == 0) score += 33;
-                    resolve();  // Resolve after updating score
-                });
-            }),
-            new Promise((resolve) => {
-                runPythonCode(code, (status, output) => {
-                    if (status == 0) {
-                        if (output.trim() === '10') score += 34;
-                        resolve();
+                // Ensure code is correctly modified and passed to runPythonCode
+                let modifiedCode = code + extraCode;
+            
+
+                console.log(typeof modifiedCode);
+                runPythonCode(modifiedCode, (status, output) => {
+                    console.log(status);
+                    if (status === 0) {
+                        score += 33; // Update score if successful
                     }
-                    resolve();  // Resolve after updating score
+                    resolve(); // Resolve after updating score
                 });
             }),
+            // new Promise((resolve) => {
+            //     let extraCode = `\nif not isinstance(x, int):\n    raise ValueError()`;
+            //     code += extraCode
+            //     runPythonCode(code, (status, output) => {
+            //         console.log(status);
+            //         if (status == 0) score += 33;
+            //         resolve();  // Resolve after updating score
+            //     });
+            // }),
+            // new Promise((resolve) => {
+            //     let extraCode = `\nif x != 10:\n    raise ValueError()`
+            //     code += extraCode
+            //     runPythonCode(code, (status, output) => {
+            //         if (status == 0) score += 33;
+            //         resolve();  // Resolve after updating score
+            //     });
+            // }),
+            // new Promise((resolve) => {
+            //     runPythonCode(code, (status, output) => {
+            //         if (status == 0) {
+            //             if (output.trim() === '10') score += 34;
+            //             resolve();
+            //         }
+            //         resolve();  // Resolve after updating score
+            //     });
+            // }),
 
         ];
         // Wait for all promises to resolve

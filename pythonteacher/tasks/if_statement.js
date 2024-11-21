@@ -1,4 +1,5 @@
-const runPythonCode = require('../src/pythonRunner');
+
+const runPythonCodeWi = require('../src/pythonRunnerWI');
 
 
 module.exports = {
@@ -29,7 +30,7 @@ weather = input()
 
         const promises = testCases.map((testCase) => {
             return new Promise((resolve) => {
-                runPythonCode(code, testCase.input, (status, output) => {
+                runPythonCodeWi(code, testCase.input, (status, output) => {
 
                     console.log(status, output);
                     if (status === 0 && output === testCase.expectedOutput) {

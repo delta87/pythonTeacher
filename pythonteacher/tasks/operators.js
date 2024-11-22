@@ -1,5 +1,8 @@
 const runPythonCodeWi = require('../src/pythonRunnerWI');
 
+const compareStrings = require('../src/compareStrings');
+
+
 module.exports = {
     question: `
 # Below is the first line of your Python program:
@@ -31,7 +34,6 @@ module.exports = {
 # Division by zero is not allowed.
 numbers = input()
         `,
-
     validateCode: (code, callback) => {
         let score = 0;
 
@@ -62,7 +64,7 @@ numbers = input()
         const promises = testCases.map((testCase) => {
             return new Promise((resolve) => {
                 runPythonCodeWi(code, testCase.input, (status, output) => {
-                    if (status === 0 && output === testCase.expectedOutput) {
+                    if (status === 0 && compareStrings(testCase.expectedOutput, output)) {
                         score += testCase.weight;
                     }
                     resolve();

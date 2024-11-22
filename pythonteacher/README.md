@@ -1,65 +1,33 @@
-# pythonteacher README
+# آموزشیار پایتون فارسی - یادگیری تعاملی پایتون در VS Code
 
-This is the README for your extension "pythonteacher". After writing up a brief description, we recommend including the following sections.
+> **آموزش گام‌به‌گام و تعاملی پایتون، به زبان فارسی و به‌طور مستقیم در محیط VS Code**
 
-## Features
+**آموزشیار پایتون فارسی** افزونه‌ای است که شما را با مفاهیم پایتون به شیوه‌ای ساده و جذاب آشنا می‌کند. این ابزار برای فارسی‌زبانانی طراحی شده که می‌خواهند به صورت تعاملی و در محیط ویرایشگر کدنویسی، اصول و تکنیک‌های برنامه‌نویسی پایتون را بیاموزند.
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+## ویژگی‌ها
 
-For example if there is an image subfolder under your extension project workspace:
+- **درس‌های گام‌به‌گام پایتون**: آموزش‌های کوتاه و ساده برای یادگیری مفاهیم پایه‌ای و پیشرفته پایتون.
+- **تمرین‌های کدنویسی**: مسائل عملی برای تقویت مهارت‌های کدنویسی و حل مسئله.
+- **اجرای کد در VS Code**: امکان اجرای کدهای پایتون بدون نیاز به خروج از محیط ویرایشگر.
+- **آزمون‌ها و ارزیابی‌ها**: آزمون‌های چندگزینه‌ای و تمرین‌های کدنویسی برای سنجش میزان یادگیری.
+- **پیگیری پیشرفت**: قابلیت مشاهده و پیگیری پیشرفت در یادگیری و تکمیل درس‌ها.
 
-\!\[feature X\]\(images/feature-x.png\)
+## نصب
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+1. به **VS Code** بروید.
+2. روی **Extensions** در نوار ابزار کلیک کنید.
+3. جستجو کنید: **"آموزشیار پایتون فارسی"**.
+4. روی **Install** کلیک کرده و در صورت نیاز VS Code را مجدداً راه‌اندازی کنید.
 
-## Requirements
+## شروع به کار
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+1. پس از نصب، پنل **آموزشیار پایتون فارسی** را از نوار کناری باز کنید.
+2. یک **درس** یا **تمرین** را انتخاب کرده و دستورات را دنبال کنید.
+3. کدها را در ویرایشگر نوشته و اجرا کنید تا نتیجه را مشاهده کنید.
+4. بعد از هر درس یا تمرین، می‌توانید ارزیابی کوتاهی انجام دهید تا دانش خود را بسنجید.
 
-## Extension Settings
+### مثال درس
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+```python
+# مثال آموزشیار پایتون فارسی: چاپ متن
+print("سلام، دنیا!")

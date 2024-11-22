@@ -1,6 +1,6 @@
 const vscode = require('vscode');
 const SideBarViewProvider = require('./src/sideBar');
-const { task1, task2, task3, task4 } = require('./tasks/all_tasks.js');
+const { task1, task2, task3, task4, task5, task6, task7, task8, task9, task10, task11, task12 } = require('./tasks/all_tasks.js');
 
 function activate(context) {
     const documentLessonMap = new Map();  // Map to store each document's lessonTitle
@@ -31,6 +31,30 @@ function activate(context) {
                         break;
                     case 'IfStatement':
                         question = task4.question;
+                        break;
+                    case 'Strings':
+                        question = task5.question;
+                        break;
+                    case 'Operators':
+                        question = task6.question;
+                        break;
+                    case 'Lists':
+                        question = task7.question;
+                        break;
+                    case 'Tuples':
+                        question = task8.question;
+                        break;
+                    case 'Sets':
+                        question = task9.question;
+                        break;
+                    case 'Dictionaries':
+                        question = task10.question;
+                        break;   
+                    case 'Loops':
+                        question = task11.question;
+                        break;
+                    case 'Functions':
+                        question = task12.question;
                         break;
                 }
 
@@ -102,6 +126,31 @@ function activate(context) {
             case 'IfStatement':
                 task4.validateCode(code, callback);
                 break;
+            case 'Strings':
+                task5.validateCode(code, callback);
+                break;
+            case 'Operators':
+                task6.validateCode(code, callback);
+                break;
+            case 'Lists':
+                task7.validateCode(code, callback);
+                break;
+            case 'Tuples':
+                task8.validateCode(code, callback);
+                break;
+            case 'Sets':
+                task9.validateCode(code, callback);
+                break;
+            case 'Dictionaries':
+                task10.validateCode(code, callback);
+                break;
+            case 'Loops':
+                task11.validateCode(code, callback);
+                break;
+            case 'Functions':
+                task12.validateCode(code, callback);
+                break;
+            
             // Add other cases as needed
             default:
                 callback(0); // Default to zero if lessonTitle doesn't match

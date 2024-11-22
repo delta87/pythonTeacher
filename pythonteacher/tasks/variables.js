@@ -7,10 +7,12 @@ module.exports = {
 
         // Create an array of promises
         const promises = [
+            
             new Promise((resolve) => {
                 let extraCode = `\nif not isinstance(x, int):\n    raise ValueError()`;
                 code += extraCode
                 runPythonCode(code, (status, output) => {
+                    console.log(status);
                     if (status == 0) score += 33;
                     resolve();  // Resolve after updating score
                 });

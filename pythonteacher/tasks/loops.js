@@ -3,16 +3,17 @@ const runPythonCodeWi = require('../src/pythonRunnerWI');
 module.exports = {
     question: `
 # Below is the first line of your Python program:
-# \`weather = input()\`
+# \`n = int(input())\`
 # Write the rest of the program below this line to:
-# - Check the value of the variable \`weather\`:
-#   - If the value is "sunny", print "It's a sunny day!"
-#   - If the value is "rainy", print "It's raining today!"
-#   - If the value is "cloudy", print "It's cloudy today!"
-#   - Otherwise, print "Weather unknown."
+# - Calculate the sum of squares of the first \`n\` positive integers.
+# - Print the result.
 # 
-# Do not modify the first line.
-weather = input()
+# Example:
+# Input: 3
+# Output: 14
+# (Explanation: 1^2 + 2^2 + 3^2 = 14)
+#
+n = int(input())
         `,
 
     validateCode: (code, callback) => {
@@ -20,16 +21,19 @@ weather = input()
 
         // Define test cases with input and expected output
         const testCases = [
-            { input: 'sunny\n', expectedOutput: "It's a sunny day!", weight: 25 },
-            { input: 'rainy\n', expectedOutput: "It's raining today!", weight: 25 },
-            { input: 'cloudy\n', expectedOutput: "It's cloudy today!", weight: 25 },
-            { input: 'snowy\n', expectedOutput: "Weather unknown.", weight: 25 },
+            { input: '3\n', expectedOutput: '14', weight: 15 },
+            { input: '5\n', expectedOutput: '55', weight: 15 },
+            { input: '1\n', expectedOutput: '1', weight: 10 },
+            { input: '10\n', expectedOutput: '385', weight: 20 },
+            { input: '20\n', expectedOutput: '2870', weight: 20 },
+            { input: '100\n', expectedOutput: '338350', weight: 20 },
         ];
 
         const promises = testCases.map((testCase) => {
             return new Promise((resolve) => {
                 runPythonCodeWi(code, testCase.input, (status, output) => {
-                    if (status === 0 && output === testCase.expectedOutput) {
+                    const cleanedOutput = output.trim(); // Remove whitespace/newlines
+                    if (status === 0 && cleanedOutput === testCase.expectedOutput) {
                         score += testCase.weight;
                     }
                     resolve();
@@ -41,7 +45,6 @@ weather = input()
         Promise.all(promises)
             .then(() => callback(score))
             .catch((error) => {
-                console.error("Error during validation:", error);
                 callback(0);
             });
     },

@@ -1,7 +1,6 @@
-
 const { spawn } = require('child_process');
 
-function runPythonCode(code, callback) {
+function runPythonCodeWi(code, userInput = null, callback) {
     const pythonProcess = spawn('python', ['-c', code]);
 
     let output = '';
@@ -25,6 +24,17 @@ function runPythonCode(code, callback) {
             callback(1, error.trim()); // Failure
         }
     });
+
+    if(userInput != '') {
+        pythonProcess.stdin.write(userInput);
+        
+    }
+
+    // Ensure userInput is a string before writing to stdin
+    if (userInput) {
+        pythonProcess.stdin.write(userInput);
+    }
+    pythonProcess.stdin.end();
 }
 
-module.exports = runPythonCode;
+module.exports = runPythonCodeWi

@@ -20,8 +20,11 @@ function runPythonCodeWi(code, userInput = null, callback) {
     pythonProcess.on('close', (code) => {
         if (code === 0) {
             callback(0, output.trim()); // Success
+
+
         } else {
             callback(1, error.trim()); // Failure
+
         }
     });
 

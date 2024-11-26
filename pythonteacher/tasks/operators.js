@@ -76,7 +76,6 @@ numbers = input()
         Promise.all(promises)
             .then(() => callback(score))
             .catch((error) => {
-                console.error("Error during validation:", error);
                 callback(0);
             });
     },

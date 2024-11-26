@@ -12,7 +12,6 @@ module.exports = {
                 let extraCode = `\nif not isinstance(x, int):\n    raise ValueError()`;
                 code += extraCode
                 runPythonCode(code, (status, output) => {
-                    console.log(status);
                     if (status == 0) score += 33;
                     resolve();  // Resolve after updating score
                 });
@@ -43,8 +42,6 @@ module.exports = {
                 callback(score);
             })
             .catch((error) => {
-                // Handle any error that occurs during the promises
-                console.error("Error during validation:", error);
                 callback(0);  // Return 0 if there's an error
             });
     }

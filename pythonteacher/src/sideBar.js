@@ -15,7 +15,6 @@ class SideBarViewProvider {
             // Attempt to load the HTML content from the external file
             webviewView.webview.html = this.getHtmlForWebview(webviewView.webview);
         } catch (error) {
-            console.error("Error loading sidebar HTML:", error);
             webviewView.webview.html = "<html><body><h2>Error loading sidebar content</h2></body></html>";
         }
 

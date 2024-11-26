@@ -58,7 +58,6 @@ module.exports = {
                 callback(score); // Return the score after all checks
             })
             .catch((error) => {
-                console.error("Error during validation:", error);
                 callback(0); // Return 0 if there's an error
             });
     }

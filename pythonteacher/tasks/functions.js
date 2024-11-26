@@ -19,7 +19,6 @@ n = int(input())
 
         // Check if the code defines a function named `factorial`
         if (!code.includes('def factorial')) {
-            console.log("Code must include a function named 'factorial'.");
             callback(0);
             return;
         }
@@ -40,10 +39,7 @@ n = int(input())
                     const cleanedOutput = output.trim();
 
                     if (status === 0 && cleanedOutput === testCase.expectedOutput.trim()) {
-                        console.log(`Test case passed! Adding ${testCase.weight} points.`);
                         score += testCase.weight;
-                    } else {
-                        console.log(`Test case failed. Expected: ${testCase.expectedOutput} but got: ${cleanedOutput}`);
                     }
 
                     resolve(); // Resolve the promise for this test case
@@ -55,7 +51,6 @@ n = int(input())
         Promise.all(promises)
             .then(() => callback(score))
             .catch((error) => {
-                console.error("Error during validation:", error);
                 callback(0);
             });
     },

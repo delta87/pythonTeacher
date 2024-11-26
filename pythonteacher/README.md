@@ -38,4 +38,4 @@ These shortcuts will open the **Python Teacher** panel when the editor text is f
 
 Here’s a quick demo of how the **Python Teacher** extension works:
 
-![Python Teacher Extension Demo](images/demo.gif)
+![Python Teacher Extension Demo](assets/main.gif)

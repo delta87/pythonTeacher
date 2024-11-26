@@ -1,33 +1,41 @@
-# آموزشیار پایتون فارسی - یادگیری تعاملی پایتون در VS Code
+# Python Teacher Extension - Learn Python through Tasks in VS Code
 
-> **آموزش گام‌به‌گام و تعاملی پایتون، به زبان فارسی و به‌طور مستقیم در محیط VS Code**
+> **Interactive Python learning with a series of tasks, directly within VS Code**
 
-**آموزشیار پایتون فارسی** افزونه‌ای است که شما را با مفاهیم پایتون به شیوه‌ای ساده و جذاب آشنا می‌کند. این ابزار برای فارسی‌زبانانی طراحی شده که می‌خواهند به صورت تعاملی و در محیط ویرایشگر کدنویسی، اصول و تکنیک‌های برنامه‌نویسی پایتون را بیاموزند.
+**Python Teacher Extension** is a tool designed to help you learn Python through solving a series of tasks. The extension provides challenges on basic Python concepts, allowing users to practice problem-solving and strengthen their coding skills, all within the VS Code editor.
 
-## ویژگی‌ها
+## Features
 
-- **درس‌های گام‌به‌گام پایتون**: آموزش‌های کوتاه و ساده برای یادگیری مفاهیم پایه‌ای و پیشرفته پایتون.
-- **تمرین‌های کدنویسی**: مسائل عملی برای تقویت مهارت‌های کدنویسی و حل مسئله.
-- **اجرای کد در VS Code**: امکان اجرای کدهای پایتون بدون نیاز به خروج از محیط ویرایشگر.
-- **آزمون‌ها و ارزیابی‌ها**: آزمون‌های چندگزینه‌ای و تمرین‌های کدنویسی برای سنجش میزان یادگیری.
-- **پیگیری پیشرفت**: قابلیت مشاهده و پیگیری پیشرفت در یادگیری و تکمیل درس‌ها.
+- **Python Tasks**: A set of practical tasks designed to teach and reinforce Python concepts.
+- **Interactive Problem Solving**: Work on real coding problems to enhance your skills.
+- **Run Code in VS Code**: Execute Python code directly within the editor without leaving the environment.
+- **Scoring System**: Each task provides a score from 0 to 100, helping you track your progress and improvement as you complete tasks.
 
-## نصب
+## Installation
 
-1. به **VS Code** بروید.
-2. روی **Extensions** در نوار ابزار کلیک کنید.
-3. جستجو کنید: **"آموزشیار پایتون فارسی"**.
-4. روی **Install** کلیک کرده و در صورت نیاز VS Code را مجدداً راه‌اندازی کنید.
+1. Open **VS Code**.
+2. Click on the **Extensions** icon in the sidebar.
+3. Search for **"Python Teacher"**.
+4. Click **Install** and restart VS Code if needed.
 
-## شروع به کار
+## Getting Started
 
-1. پس از نصب، پنل **آموزشیار پایتون فارسی** را از نوار کناری باز کنید.
-2. یک **درس** یا **تمرین** را انتخاب کرده و دستورات را دنبال کنید.
-3. کدها را در ویرایشگر نوشته و اجرا کنید تا نتیجه را مشاهده کنید.
-4. بعد از هر درس یا تمرین، می‌توانید ارزیابی کوتاهی انجام دهید تا دانش خود را بسنجید.
+1. After installation, open the **Python Teacher** panel from the sidebar.
+2. Choose a **task** and follow the instructions provided.
+3. Write and run Python code in the editor to solve the task.
+4. After completing a task, you will receive a score from 0 to 100 based on your solution.
 
-### مثال درس
+## Shortcut
 
-```python
-# مثال آموزشیار پایتون فارسی: چاپ متن
-print("سلام، دنیا!")
+You can quickly open the **Python Teacher** sidebar using the following keyboard shortcuts:
+
+- **Windows/Linux**: `Ctrl + Alt + L`
+- **Mac**: `Cmd + Alt + L`
+
+These shortcuts will open the **Python Teacher** panel when the editor text is focused.
+
+## Demo
+
+Here’s a quick demo of how the **Python Teacher** extension works:
+
+![Python Teacher Extension Demo](assets/main.gif)

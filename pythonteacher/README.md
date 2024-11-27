@@ -1,65 +1,41 @@
-# pythonteacher README
+# Python Teacher Extension - Learn Python through Tasks in VS Code
 
-This is the README for your extension "pythonteacher". After writing up a brief description, we recommend including the following sections.
+> **Interactive Python learning with a series of tasks, directly within VS Code**
+
+**Python Teacher Extension** is a tool designed to help you learn Python through solving a series of tasks. The extension provides challenges on basic Python concepts, allowing users to practice problem-solving and strengthen their coding skills, all within the VS Code editor.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- **Python Tasks**: A set of practical tasks designed to teach and reinforce Python concepts.
+- **Interactive Problem Solving**: Work on real coding problems to enhance your skills.
+- **Run Code in VS Code**: Execute Python code directly within the editor without leaving the environment.
+- **Scoring System**: Each task provides a score from 0 to 100, helping you track your progress and improvement as you complete tasks.
 
-For example if there is an image subfolder under your extension project workspace:
+## Installation
 
-\!\[feature X\]\(images/feature-x.png\)
+1. Open **VS Code**.
+2. Click on the **Extensions** icon in the sidebar.
+3. Search for **"Python Teacher"**.
+4. Click **Install** and restart VS Code if needed.
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+## Getting Started
 
-## Requirements
+1. After installation, open the **Python Teacher** panel from the sidebar.
+2. Choose a **task** and follow the instructions provided.
+3. Write and run Python code in the editor to solve the task.
+4. After completing a task, you will receive a score from 0 to 100 based on your solution.
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+## Shortcut
 
-## Extension Settings
+You can quickly open the **Python Teacher** sidebar using the following keyboard shortcuts:
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+- **Windows/Linux**: `Ctrl + Alt + L`
+- **Mac**: `Cmd + Alt + L`
 
-For example:
+These shortcuts will open the **Python Teacher** panel when the editor text is focused.
 
-This extension contributes the following settings:
+## Demo
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+Here’s a quick demo of how the **Python Teacher** extension works:
 
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+![Python Teacher Extension Demo](assets/main.gif)

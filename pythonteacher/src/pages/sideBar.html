@@ -1,97 +1,575 @@
 <!DOCTYPE html>
-<html lang="fa">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Python Teacher</title>
     <style>
+      :root {
+        --bg: var(--vscode-sideBar-background);
+        --fg: var(--vscode-foreground);
+        --border: var(--vscode-sideBarSectionHeader-border);
+        --hover: var(--vscode-list-hoverBackground);
+        --accent: var(--vscode-textLink-foreground);
+        --success: #4caf50;
+        --warning: #ff9800;
+        --error: #f44336;
+        --locked: #666;
+        --card-bg: var(--vscode-editor-background);
+        --progress-bg: var(--vscode-progressBar-background);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
       body {
-        font-family: Arial, sans-serif;
-        padding: 15px;
-        direction: rtl;
-        background-color: transparent;
-        color: var(--vscode-foreground);
-      }
-      h2 {
-        color: var(--vscode-sideBarTitle-foreground);
-        margin-bottom: 15px;
-        padding-right: 10px;
-      }
-      .lesson {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         padding: 12px;
-        cursor: pointer;
-        border: 1px solid var(--vscode-sideBarSectionHeader-border);
-        margin-bottom: 10px;
-        border-radius: 8px;
+        background-color: var(--bg);
+        color: var(--fg);
+        line-height: 1.5;
+        font-size: 13px;
+      }
+
+      [dir="rtl"] {
+        direction: rtl;
+        text-align: right;
+      }
+
+      [dir="ltr"] {
+        direction: ltr;
+        text-align: left;
+      }
+
+      .header {
         display: flex;
         align-items: center;
-        background-color: var(--vscode-editor-background);
-        color: var(--vscode-foreground);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        transition: background-color 0.3s, transform 0.1s;
+        justify-content: space-between;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border);
       }
-      .lesson:hover {
-        background-color: var(--vscode-list-hoverBackground);
-        transform: translateY(-2px);
+
+      .header h2 {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--fg);
       }
+
+      .lang-toggle {
+        display: flex;
+        gap: 4px;
+        background: var(--card-bg);
+        border-radius: 6px;
+        padding: 2px;
+      }
+
+      .lang-btn {
+        padding: 4px 10px;
+        border: none;
+        background: transparent;
+        color: var(--fg);
+        cursor: pointer;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 500;
+        transition: all 0.2s;
+      }
+
+      .lang-btn.active {
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .lang-btn:hover:not(.active) {
+        background: var(--hover);
+      }
+
+      .progress-section {
+        margin-bottom: 16px;
+        padding: 12px;
+        background: var(--card-bg);
+        border-radius: 8px;
+        border: 1px solid var(--border);
+      }
+
+      .progress-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .progress-label {
+        font-size: 12px;
+        font-weight: 500;
+        opacity: 0.8;
+      }
+
+      .progress-value {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--accent);
+      }
+
+      .progress-bar {
+        height: 6px;
+        background: var(--border);
+        border-radius: 3px;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--accent), #2196f3);
+        border-radius: 3px;
+        transition: width 0.5s ease;
+      }
+
+      .category {
+        margin-bottom: 16px;
+      }
+
+      .category-title {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        opacity: 0.6;
+        margin-bottom: 8px;
+        padding: 0 4px;
+      }
+
+      .lesson-card {
+        display: flex;
+        align-items: center;
+        padding: 10px 12px;
+        margin-bottom: 6px;
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .lesson-card:hover:not(.locked) {
+        border-color: var(--accent);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      .lesson-card.locked {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .lesson-card.completed {
+        border-left: 3px solid var(--success);
+      }
+
+      [dir="rtl"] .lesson-card.completed {
+        border-left: none;
+        border-right: 3px solid var(--success);
+      }
+
+      .lesson-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-inline-end: 10px;
+        font-size: 14px;
+        flex-shrink: 0;
+      }
+
+      .lesson-icon.completed {
+        background: rgba(76, 175, 80, 0.15);
+      }
+
+      .lesson-icon.in-progress {
+        background: rgba(33, 150, 243, 0.15);
+      }
+
+      .lesson-icon.locked {
+        background: rgba(102, 102, 102, 0.15);
+      }
+
+      .lesson-info {
+        flex: 1;
+        min-width: 0;
+      }
+
       .lesson-title {
-        flex-grow: 1;
-        font-size: 17px;
+        font-size: 13px;
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
-      .lesson-number {
-        font-weight: bold;
-        color: var(--vscode-list-highlightForeground);
-        margin-left: 10px;
+
+      .lesson-desc {
+        font-size: 11px;
+        opacity: 0.6;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .lesson-status {
+        font-size: 11px;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-weight: 500;
+        flex-shrink: 0;
+      }
+
+      .lesson-status.completed {
+        background: rgba(76, 175, 80, 0.15);
+        color: var(--success);
+      }
+
+      .lesson-status.in-progress {
+        background: rgba(33, 150, 243, 0.15);
+        color: #2196f3;
+      }
+
+      .lesson-status.locked {
+        background: rgba(102, 102, 102, 0.15);
+        color: var(--locked);
+      }
+
+      .practice-badge {
+        font-size: 10px;
+        padding: 1px 6px;
+        border-radius: 8px;
+        background: rgba(255, 152, 0, 0.15);
+        color: var(--warning);
+        margin-inline-start: 6px;
+      }
+
+      .reset-btn {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--fg);
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 11px;
+        margin-top: 12px;
+        transition: all 0.2s;
+      }
+
+      .reset-btn:hover {
+        background: var(--error);
+        color: #fff;
+        border-color: var(--error);
+      }
+
+      .score-display {
+        font-size: 11px;
+        color: var(--accent);
+        font-weight: 600;
+      }
+
+      .divider {
+        height: 1px;
+        background: var(--border);
+        margin: 12px 0;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 24px;
+        opacity: 0.5;
+      }
+
+      .empty-state-icon {
+        font-size: 32px;
+        margin-bottom: 8px;
+      }
+
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 3px;
       }
     </style>
   </head>
   <body>
-    <h2>درس‌نامه‌ها</h2>
-    <div class="lesson" onclick="openLesson('Variables')">
-      <span class="lesson-title">متغیرها (Variables)</span>
+    <div class="header">
+      <h2 id="sidebarTitle">Python Teacher</h2>
+      <div class="lang-toggle">
+        <button class="lang-btn active" id="btnEn" onclick="setLanguage('en')">EN</button>
+        <button class="lang-btn" id="btnFa" onclick="setLanguage('fa')">فا</button>
+      </div>
     </div>
-    <div class="lesson" onclick="openLesson('DataTypes')">
-      <span class="lesson-title">انواع داده (Data Types)</span>
+
+    <div class="progress-section">
+      <div class="progress-header">
+        <span class="progress-label" id="progressLabel">Progress</span>
+        <span class="progress-value" id="progressValue">0%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+      </div>
     </div>
-    <div class="lesson" onclick="openLesson('TypeCasting')">
-      <span class="lesson-title">تبدیل انواع (Type Casting)</span>
-    </div>
-    <div class="lesson" onclick="openLesson('IfStatement')">
-      <span class="lesson-title">شرط ها (If Statement)</span>
-    </div>
-    <div class="lesson" onclick="openLesson('Strings')">
-      <span class="lesson-title">رشته (Strings)</span>
-    </div>
-    <div class="lesson" onclick="openLesson('Operators')">
-      <span class="lesson-title">عملگرها (Operators)</span>
-    </div>
-    <div class="lesson" onclick="openLesson('Lists')">
-      <span class="lesson-title">لیست (Lists)</span>
-    </div>
-    <div class="lesson" onclick="openLesson('Tuples')">
-      <span class="lesson-title">تاپل (Tuples)</span>
-    </div>
-    <div class="lesson" onclick="openLesson('Sets')">
-      <span class="lesson-title">مجموعه (Sets)</span>
-    </div>
-    <div class="lesson" onclick="openLesson('Dictionaries')">
-      <span class="lesson-title">دیکشنری (Dictionaries)</span>
-    </div>
-    <div class="lesson" onclick="openLesson('Loops')">
-      <span class="lesson-title">حلقه‌ها (Loops)</span>
-    </div>
-    <div class="lesson" onclick="openLesson('Functions')">
-      <span class="lesson-title">توابع (Functions)</span>
-    </div>
+
+    <div id="lessonsContainer"></div>
+
+    <button class="reset-btn" id="resetBtn" onclick="resetProgress()">Reset Progress</button>
+
     <script>
       const vscode = acquireVsCodeApi();
+      let currentLocale = 'en';
 
-      function openLesson(command) {
-        vscode.postMessage({
-          command: "pythonteacher.openLessonFile",
-          lessonTitle: command,
-        });
+      const translations = {
+        en: {
+          progress: 'Progress',
+          completed: 'Completed',
+          notStarted: 'Not started',
+          inProgress: 'In progress',
+          locked: 'Locked',
+          practice: 'Practice',
+          resetProgress: 'Reset Progress',
+          resetConfirm: 'Are you sure you want to reset all progress?',
+          categories: {
+            basics: 'Basics',
+            controlFlow: 'Control Flow',
+            dataStructures: 'Data Structures',
+            functions: 'Functions',
+            advanced: 'Advanced',
+          },
+          lessonNames: {
+            variables: 'Variables',
+            dataTypes: 'Data Types',
+            typeCasting: 'Type Casting',
+            operators: 'Operators',
+            ifStatement: 'If Statements',
+            loops: 'Loops',
+            strings: 'Strings',
+            lists: 'Lists',
+            tuples: 'Tuples',
+            sets: 'Sets',
+            dictionaries: 'Dictionaries',
+            functions: 'Functions',
+            listComprehensions: 'List Comprehensions',
+            errorHandling: 'Error Handling',
+            fileIO: 'File I/O',
+            oop: 'OOP',
+            modules: 'Modules',
+          },
+          lessonDescs: {
+            variables: 'Learn to create and use variables',
+            dataTypes: 'int, float, str, bool and more',
+            typeCasting: 'Convert between types',
+            operators: 'Arithmetic and comparison',
+            ifStatement: 'Conditional logic with if/elif/else',
+            loops: 'for and while loops',
+            strings: 'String manipulation',
+            lists: 'Working with lists',
+            tuples: 'Immutable sequences',
+            sets: 'Unique collections',
+            dictionaries: 'Key-value pairs',
+            functions: 'Reusable code blocks',
+            listComprehensions: 'Elegant list creation',
+            errorHandling: 'try/except blocks',
+            fileIO: 'Read and write files',
+            oop: 'Classes and objects',
+            modules: 'Using Python modules',
+          },
+        },
+        fa: {
+          progress: 'پیشرفت',
+          completed: 'تکمیل شده',
+          notStarted: 'شروع نشده',
+          inProgress: 'در حال انجام',
+          locked: 'قفل',
+          practice: 'تمرین',
+          resetProgress: 'بازنشانی پیشرفت',
+          resetConfirm: 'آیا از بازنشانی تمام پیشرفت اطمینان دارید؟',
+          categories: {
+            basics: 'مبانی',
+            controlFlow: 'کنترل جریان',
+            dataStructures: 'ساختارهای داده',
+            functions: 'توابع',
+            advanced: 'پیشرفته',
+          },
+          lessonNames: {
+            variables: 'متغیرها',
+            dataTypes: 'انواع داده',
+            typeCasting: 'تبدیل نوع',
+            operators: 'عملگرها',
+            ifStatement: 'عبارات شرطی',
+            loops: 'حلقه‌ها',
+            strings: 'رشته‌ها',
+            lists: 'لیست‌ها',
+            tuples: 'تاپل‌ها',
+            sets: 'مجموعه‌ها',
+            dictionaries: 'دیکشنری‌ها',
+            functions: 'توابع',
+            listComprehensions: 'List Comprehension',
+            errorHandling: 'مدیریت خطا',
+            fileIO: 'ورودی/خروجی فایل',
+            oop: 'برنامه‌نویسی شیءگرا',
+            modules: 'ماژول‌ها',
+          },
+          lessonDescs: {
+            variables: 'ایجاد و استفاده از متغیرها',
+            dataTypes: 'int, float, str, bool و بیشتر',
+            typeCasting: 'تبدیل بین انواع',
+            operators: 'عملیات ریاضی و مقایسه‌ای',
+            ifStatement: 'منطق شرطی با if/elif/else',
+            loops: 'حلقه‌های for و while',
+            strings: 'کار با رشته‌ها',
+            lists: 'کار با لیست‌ها',
+            tuples: 'دنباله‌های غیرقابل تغییر',
+            sets: 'مجموعه‌های یکتا',
+            dictionaries: 'جفت‌های کلید-مقدار',
+            functions: 'بلوک‌های کد قابل استفاده مجدد',
+            listComprehensions: 'ایجاد لیست به شکل زیبا',
+            errorHandling: 'بلوک‌های try/except',
+            fileIO: 'خواندن و نوشتن فایل‌ها',
+            oop: 'کلاس‌ها و اشیاء',
+            modules: 'استفاده از ماژول‌های پایتون',
+          },
+        },
+      };
+
+      function t(key) {
+        const keys = key.split('.');
+        let val = translations[currentLocale];
+        for (const k of keys) {
+          val = val?.[k];
+        }
+        return val || key;
       }
+
+      function setLanguage(locale) {
+        currentLocale = locale;
+        document.documentElement.lang = locale;
+        document.body.setAttribute('dir', locale === 'fa' ? 'rtl' : 'ltr');
+        document.getElementById('btnEn').classList.toggle('active', locale === 'en');
+        document.getElementById('btnFa').classList.toggle('active', locale === 'fa');
+        vscode.postMessage({ command: 'setLanguage', locale });
+        renderLessons();
+      }
+
+      function openLesson(lessonId) {
+        vscode.postMessage({ command: 'openLesson', lessonId });
+      }
+
+      function openPractice(lessonId, practiceIndex) {
+        vscode.postMessage({ command: 'openPractice', lessonId, practiceIndex });
+      }
+
+      function resetProgress() {
+        if (confirm(t('resetConfirm'))) {
+          vscode.postMessage({ command: 'resetProgress' });
+        }
+      }
+
+      function renderLessons() {
+        const data = vscode.getState();
+        if (!data || !data.categories) return;
+
+        document.getElementById('sidebarTitle').textContent = currentLocale === 'fa' ? 'معلم پایتون' : 'Python Teacher';
+        document.getElementById('progressLabel').textContent = t('progress');
+        document.getElementById('resetBtn').textContent = t('resetProgress');
+
+        const totalLessons = data.allLessons.length;
+        const completedCount = Object.keys(data.completedLessons || {}).length;
+        const pct = totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
+        document.getElementById('progressValue').textContent = pct + '%';
+        document.getElementById('progressFill').style.width = pct + '%';
+
+        const container = document.getElementById('lessonsContainer');
+        container.innerHTML = '';
+
+        for (const cat of data.categories) {
+          const catDiv = document.createElement('div');
+          catDiv.className = 'category';
+
+          const catTitle = document.createElement('div');
+          catTitle.className = 'category-title';
+          catTitle.textContent = t('categories.' + cat.id);
+          catDiv.appendChild(catTitle);
+
+          for (const lesson of cat.lessons) {
+            const isCompleted = data.completedLessons && data.completedLessons[lesson.id];
+            const isUnlocked = data.unlockedLessons && data.unlockedLessons[lesson.id];
+            const status = isCompleted ? 'completed' : (isUnlocked ? 'in-progress' : 'locked');
+            const icon = isCompleted ? '✓' : (isUnlocked ? '▶' : '🔒');
+
+            const card = document.createElement('div');
+            card.className = 'lesson-card ' + status;
+
+            const iconDiv = document.createElement('div');
+            iconDiv.className = 'lesson-icon ' + status;
+            iconDiv.textContent = icon;
+            card.appendChild(iconDiv);
+
+            const infoDiv = document.createElement('div');
+            infoDiv.className = 'lesson-info';
+
+            const titleDiv = document.createElement('div');
+            titleDiv.className = 'lesson-title';
+            titleDiv.textContent = t('lessonNames.' + lesson.id);
+            infoDiv.appendChild(titleDiv);
+
+            const descDiv = document.createElement('div');
+            descDiv.className = 'lesson-desc';
+            descDiv.textContent = t('lessonDescs.' + lesson.id);
+            infoDiv.appendChild(descDiv);
+
+            card.appendChild(infoDiv);
+
+            const statusSpan = document.createElement('span');
+            statusSpan.className = 'lesson-status ' + status;
+            statusSpan.textContent = t(status === 'completed' ? 'completed' : status === 'in-progress' ? 'inProgress' : 'locked');
+            card.appendChild(statusSpan);
+
+            if (isCompleted && data.scores && data.scores[lesson.id]) {
+              const scoreSpan = document.createElement('span');
+              scoreSpan.className = 'score-display';
+              scoreSpan.textContent = data.scores[lesson.id] + '%';
+              card.appendChild(scoreSpan);
+            }
+
+            if (isUnlocked) {
+              card.onclick = () => openLesson(lesson.id);
+            }
+
+            catDiv.appendChild(card);
+          }
+
+          container.appendChild(catDiv);
+        }
+      }
+
+      window.addEventListener('message', (event) => {
+        const message = event.data;
+        if (message.command === 'updateState') {
+          vscode.setState(message.state);
+          renderLessons();
+        }
+      });
+
+      vscode.postMessage({ command: 'requestState' });
     </script>
   </body>
 </html>

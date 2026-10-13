@@ -1,17 +1,37 @@
 {
     "name": "pythonteacher",
-    "displayName": "PythonTeacher",
+    "displayName": "Python Teacher",
     "description": "The Python Teacher extension is your personal guide to mastering Python within Visual Studio Code. Perfect for beginners and intermediate learners alike, this extension brings interactive lessons, code challenges, and real-time feedback right to your editor.",
-    "version": "0.0.1",
+    "version": "2.0.0",
     "engines": {
         "vscode": "^1.94.0"
     },
     "categories": [
+        "Education",
         "Other"
     ],
-    "activationEvents": [],
+    "activationEvents": [
+        "onLanguage:python",
+        "onView:pythonTeacherSidebar"
+    ],
     "main": "./extension.js",
     "contributes": {
+        "configuration": {
+            "title": "Python Teacher",
+            "properties": {
+                "pythonteacher.language": {
+                    "type": "string",
+                    "enum": ["en", "fa"],
+                    "default": "en",
+                    "description": "Interface language for Python Teacher"
+                },
+                "pythonteacher.timeoutMs": {
+                    "type": "number",
+                    "default": 10000,
+                    "description": "Timeout in milliseconds for code execution"
+                }
+            }
+        },
         "viewsContainers": {
             "activitybar": [
                 {
@@ -24,34 +44,65 @@
         "views": {
             "pythonTeacherSidebar": [
                 {
-                    "id": "pythonTeacherSidebar",
+                    "id": "pythonTeacherView",
                     "name": "Python Teacher",
-                    "type": "webview"
+                    "type": "webview",
+                    "icon": "./assets/t.svg",
+                    "contextualTitle": "Python Teacher"
                 }
             ]
         },
         "commands": [
             {
-                "command": "pythonteacher.validateCode",
-                "title": "validate Code"
+                "command": "pythonteacher.openSidebar",
+                "title": "Open Python Teacher Sidebar",
+                "icon": "$(book)"
             },
             {
-                "command": "pythonteacher.openLessonFile",
-                "title": "Open Lesson File"
+                "command": "pythonteacher.openLesson",
+                "title": "Open Lesson"
             },
             {
-              "command": "pythonteacher.openSidebar",
-              "title": "Open Python Teacher Sidebar"
+                "command": "pythonteacher.openPractice",
+                "title": "Open Practice Exercise"
+            },
+            {
+                "command": "pythonteacher.setLanguage",
+                "title": "Set Language"
+            },
+            {
+                "command": "pythonteacher.resetProgress",
+                "title": "Reset Progress"
             }
         ],
+        "menus": {
+            "view/title": [
+                {
+                    "command": "pythonteacher.openSidebar",
+                    "when": "view == pythonTeacherSidebar",
+                    "group": "navigation"
+                },
+                {
+                    "command": "pythonteacher.resetProgress",
+                    "when": "view == pythonTeacherSidebar",
+                    "group": "navigation"
+                }
+            ],
+            "editor/context": [
+                {
+                    "command": "pythonteacher.openSidebar",
+                    "when": "editorLangId == python",
+                    "group": "1_modification"
+                }
+            ]
+        },
         "keybindings": [
-          {
-            "command": "pythonteacher.openSidebar",
-            "key": "ctrl+alt+l",
-            "mac": "cmd+alt+l",
-            "when": "editorTextFocus"
-        }        
-            
+            {
+                "command": "pythonteacher.openSidebar",
+                "key": "ctrl+alt+l",
+                "mac": "cmd+alt+l",
+                "when": "editorTextFocus"
+            }
         ]
     },
     "scripts": {

@@ -1,12 +1,18 @@
+// Entry point: registers commands, sidebar, and lesson view providers
 const vscode = require('vscode');
 const SideBarViewProvider = require('./src/sideBar');
-const { task1, task2, task3, task4, task5, task6, task7, task8, task9, task10, task11, task12 } = require('./tasks/all_tasks.js');
+const LessonViewProvider = require('./src/lessonViewProvider');
+const ProgressTracker = require('./src/progress');
+const lessonRegistry = require('./src/lessons');
+const { t, setLocale, getLocale } = require('./src/i18n');
 
 function activate(context) {
-    const documentLessonMap = new Map();  // Map to store each document's lessonTitle
+    const progress = new ProgressTracker(context);
+    const documentLessonMap = new Map();
+    const lessonView = new LessonViewProvider(context);
 
     context.subscriptions.push(
-        vscode.window.registerWebviewViewProvider('pythonTeacherSidebar', new SideBarViewProvider(context))
+        vscode.window.registerWebviewViewProvider('pythonTeacherView', new SideBarViewProvider(context))
     );
 
     context.subscriptions.push(
@@ -16,74 +22,83 @@ function activate(context) {
     );
 
     context.subscriptions.push(
-        vscode.commands.registerCommand('pythonteacher.openLessonFile', (lessonTitle) => {
-            vscode.workspace.openTextDocument({ language: 'python' }).then(doc => {
-                var question;
-                switch (lessonTitle) {
-                    case 'Variables':
-                        question = task1.question;
-                        break;    
-                    case 'DataTypes':
-                        question = task2.question;
-                        break;
-                    case 'TypeCasting':
-                        question = task3.question;
-                        break;
-                    case 'IfStatement':
-                        question = task4.question;
-                        break;
-                    case 'Strings':
-                        question = task5.question;
-                        break;
-                    case 'Operators':
-                        question = task6.question;
-                        break;
-                    case 'Lists':
-                        question = task7.question;
-                        break;
-                    case 'Tuples':
-                        question = task8.question;
-                        break;
-                    case 'Sets':
-                        question = task9.question;
-                        break;
-                    case 'Dictionaries':
-                        question = task10.question;
-                        break;   
-                    case 'Loops':
-                        question = task11.question;
-                        break;
-                    case 'Functions':
-                        question = task12.question;
-                        break;
-                }
+        vscode.commands.registerCommand('pythonteacher.openLesson', (lessonId) => {
+            lessonView.showLesson(lessonId);
+        })
+    );
 
-                // Associate this document with the lesson
-                documentLessonMap.set(doc.uri.toString(), lessonTitle);
+    context.subscriptions.push(
+        vscode.commands.registerCommand('pythonteacher.openPractice', (lessonId, practiceIndex) => {
+            const lesson = lessonRegistry.getLesson(lessonId);
+            if (!lesson || !lesson.practice || !lesson.practice[practiceIndex]) return;
+
+            const exercise = lesson.practice[practiceIndex];
+            const locale = getLocale();
+            const question = locale === 'fa' && exercise.questionFa ? exercise.questionFa : exercise.question;
+
+            vscode.workspace.openTextDocument({ language: 'python' }).then(doc => {
+                documentLessonMap.set(doc.uri.toString(), { lessonId, type: 'practice', practiceIndex });
 
                 vscode.window.showTextDocument(doc).then(editor => {
                     editor.edit(editBuilder => {
-                        editBuilder.insert(new vscode.Position(0, 0), `# Lesson Task: ${lessonTitle}\n# ${question}\n\n`);
+                        const title = locale === 'fa' ? 'تمرین عملی' : 'Practice Exercise';
+                        editBuilder.insert(
+                            new vscode.Position(0, 0),
+                            `# ${title}: ${lessonId} #${practiceIndex + 1}\n# ${question}\n\n`
+                        );
                     });
-                    // Show the validation button for this specific lesson
-                    showValidationButton(lessonTitle);
+                    showValidationButton(lessonId, practiceIndex);
                 });
             });
         })
     );
 
-    let currentValidationButton = null;       // Track the current button
-    let validateCommand = null;               // Track the command registration
+    context.subscriptions.push(
+        vscode.commands.registerCommand('pythonteacher.setLanguage', (locale) => {
+            setLocale(locale);
+            vscode.window.showInformationMessage(
+                locale === 'fa' ? 'زبان به فارسی تغییر کرد' : 'Language changed to English'
+            );
+            refreshSidebar();
+        })
+    );
 
-    function showValidationButton(lessonTitle) {
+    context.subscriptions.push(
+        vscode.commands.registerCommand('pythonteacher.resetProgress', async () => {
+            const answer = await vscode.window.showWarningMessage(
+                t('resetConfirm'),
+                t('yes'),
+                t('no')
+            );
+            if (answer === t('yes')) {
+                progress.reset();
+                refreshSidebar();
+                vscode.window.showInformationMessage(
+                    getLocale() === 'fa' ? 'پیشرفت بازنشانی شد' : 'Progress has been reset'
+                );
+            }
+        })
+    );
+
+    let currentValidationButton = null;
+    let validateCommand = null;
+
+    function showValidationButton(lessonId, practiceIndex) {
         if (currentValidationButton) {
             currentValidationButton.dispose();
         }
 
+        const lesson = lessonRegistry.getLesson(lessonId);
+        if (!lesson) return;
+
+        const label = practiceIndex !== undefined
+            ? `Validate ${lessonId} #${practiceIndex + 1}`
+            : `Validate ${lessonId}`;
+
         const button = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-        button.text = `✔️ Validate ${lessonTitle}`;
-        button.command = `pythonteacher.validateCode.${lessonTitle}`;
-        button.tooltip = `Click to validate the Python code for ${lessonTitle}`;
+        button.text = `$(check) ${label}`;
+        button.command = `pythonteacher.validateCode.${lessonId}`;
+        button.tooltip = `${t('clickToValidate')} - ${lessonId}`;
         button.show();
 
         currentValidationButton = button;
@@ -92,84 +107,62 @@ function activate(context) {
             validateCommand.dispose();
         }
 
-        validateCommand = vscode.commands.registerCommand(`pythonteacher.validateCode.${lessonTitle}`, () => {
+        validateCommand = vscode.commands.registerCommand(`pythonteacher.validateCode.${lessonId}`, () => {
             const editor = vscode.window.activeTextEditor;
-            if (editor) {
-                const code = editor.document.getText();
+            if (!editor) return;
 
-                validatePythonCode(code, lessonTitle, (score) => {
-                    if (score === 100) {
-                        vscode.window.showInformationMessage(`✅  Perfect! ${score}/100`);
-                    } else if (score > 0 && score < 100) {
-                        vscode.window.showInformationMessage(`⚠️  Some issues found. ${score}/100`);
-                    } else {
-                        vscode.window.showInformationMessage(`❌  Validation failed. ${score}/100`);
-                    }
-                });
+            const code = editor.document.getText();
+            const docInfo = documentLessonMap.get(editor.document.uri.toString());
+
+            let validateFn;
+            if (docInfo && docInfo.type === 'practice' && lesson.practice && lesson.practice[docInfo.practiceIndex]) {
+                validateFn = lesson.practice[docInfo.practiceIndex].validateCode;
+            } else {
+                validateFn = lesson.validateCode;
             }
+
+            if (!validateFn) return;
+
+            validateFn(code, (score) => {
+                if (score === 100) {
+                    vscode.window.showInformationMessage(`✅ ${t('perfect')} ${score}/100`);
+                    if (docInfo && docInfo.type === 'lesson') {
+                        progress.completeLesson(lessonId, score);
+                        refreshSidebar();
+                    }
+                } else if (score > 0 && score < 100) {
+                    vscode.window.showInformationMessage(`⚠️ ${t('someIssues')} ${score}/100`);
+                } else {
+                    vscode.window.showInformationMessage(`❌ ${t('failed')} ${score}/100`);
+                }
+            });
         });
 
         context.subscriptions.push(button, validateCommand);
     }
 
-    function validatePythonCode(code, lessonTitle, callback) {
-        switch (lessonTitle) {
-            case 'Variables':
-                task1.validateCode(code, callback);
-                break;
-            case 'DataTypes':
-                task2.validateCode(code, callback);
-                break;
-            case 'TypeCasting':
-                task3.validateCode(code, callback);
-                break;
-            case 'IfStatement':
-                task4.validateCode(code, callback);
-                break;
-            case 'Strings':
-                task5.validateCode(code, callback);
-                break;
-            case 'Operators':
-                task6.validateCode(code, callback);
-                break;
-            case 'Lists':
-                task7.validateCode(code, callback);
-                break;
-            case 'Tuples':
-                task8.validateCode(code, callback);
-                break;
-            case 'Sets':
-                task9.validateCode(code, callback);
-                break;
-            case 'Dictionaries':
-                task10.validateCode(code, callback);
-                break;
-            case 'Loops':
-                task11.validateCode(code, callback);
-                break;
-            case 'Functions':
-                task12.validateCode(code, callback);
-                break;
-            
-            // Add other cases as needed
-            default:
-                callback(0); // Default to zero if lessonTitle doesn't match
-        }
+    function refreshSidebar() {
+        vscode.commands.executeCommand('pythonteacher.refreshSidebar');
     }
 
-    // Listen for changes in the active editor to update the validation button
     vscode.window.onDidChangeActiveTextEditor(editor => {
         if (editor) {
-            const lessonTitle = documentLessonMap.get(editor.document.uri.toString());
-            if (lessonTitle) {
-                showValidationButton(lessonTitle);
+            const docInfo = documentLessonMap.get(editor.document.uri.toString());
+            if (docInfo) {
+                showValidationButton(docInfo.lessonId, docInfo.practiceIndex);
             } else if (currentValidationButton) {
-                currentValidationButton.hide();  // Hide button if no lesson is associated
+                currentValidationButton.hide();
             }
         }
     });
 
     context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor);
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('pythonteacher.refreshSidebar', () => {
+            vscode.commands.executeCommand('workbench.view.extension.pythonTeacherSidebar');
+        })
+    );
 }
 
 function deactivate() {}

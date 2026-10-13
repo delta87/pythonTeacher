@@ -1,41 +1,47 @@
-# Python Teacher Extension - Learn Python through Tasks in VS Code
+# Python Teacher
 
-> **Interactive Python learning with a series of tasks, directly within VS Code**
-
-**Python Teacher Extension** is a tool designed to help you learn Python through solving a series of tasks. The extension provides challenges on basic Python concepts, allowing users to practice problem-solving and strengthen their coding skills, all within the VS Code editor.
+Learn Python interactively right inside VS Code. Step-by-step lessons with explanations, code examples, and practice exercises — all in your editor.
 
 ## Features
 
-- **Python Tasks**: A set of practical tasks designed to teach and reinforce Python concepts.
-- **Interactive Problem Solving**: Work on real coding problems to enhance your skills.
-- **Run Code in VS Code**: Execute Python code directly within the editor without leaving the environment.
-- **Scoring System**: Each task provides a score from 0 to 100, helping you track your progress and improvement as you complete tasks.
+- **17 Interactive Lessons** — Variables, Data Types, Control Flow, Data Structures, Functions, OOP, File I/O, and more
+- **Teaching Pages** — Each lesson opens a full page with explanations and code examples, not just a bare exercise
+- **Practice Exercises** — 2-3 extra problems per lesson with automated validation and scoring
+- **Bilingual** — English and Persian (فارسی) with full RTL support, switchable from the sidebar
+- **Progress Tracking** — Completion and scores persist across sessions
+- **Sequential Unlocking** — Lessons unlock in order as you complete them
+- **Instant Feedback** — Validate your code and get a score from 0 to 100
 
-## Installation
+## How to Use
 
-1. Open **VS Code**.
-2. Click on the **Extensions** icon in the sidebar.
-3. Search for **"Python Teacher"**.
-4. Click **Install** and restart VS Code if needed.
+1. Open the **Python Teacher** sidebar (or press `Ctrl+Alt+L` / `Cmd+Alt+L`)
+2. Click any unlocked lesson to read the teaching content with examples
+3. Click **Start Practice** on any exercise to open it in the editor
+4. Write your solution and click the **Validate** button in the status bar
+5. Score 100 to complete the lesson and unlock the next one
 
-## Getting Started
+## Lessons
 
-1. After installation, open the **Python Teacher** panel from the sidebar.
-2. Choose a **task** and follow the instructions provided.
-3. Write and run Python code in the editor to solve the task.
-4. After completing a task, you will receive a score from 0 to 100 based on your solution.
+| Category | Lessons |
+|----------|---------|
+| Basics | Variables, Data Types, Type Casting, Operators |
+| Control Flow | If Statements, Loops |
+| Data Structures | Strings, Lists, Tuples, Sets, Dictionaries |
+| Functions | Functions, List Comprehensions |
+| Advanced | Error Handling, File I/O, OOP, Modules |
 
-## Shortcut
+## Configuration
 
-You can quickly open the **Python Teacher** sidebar using the following keyboard shortcuts:
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `pythonteacher.language` | `en` | Interface language (`en` or `fa`) |
+| `pythonteacher.timeoutMs` | `10000` | Code execution timeout in ms |
 
-- **Windows/Linux**: `Ctrl + Alt + L`
-- **Mac**: `Cmd + Alt + L`
+## Requirements
 
-These shortcuts will open the **Python Teacher** panel when the editor text is focused.
+- VS Code 1.94.0+
+- Python 3.x in PATH
 
-## Demo
+## Support
 
-Here’s a quick demo of how the **Python Teacher** extension works:
-
-![Python Teacher Extension Demo](assets/main.gif)
+If you find this extension helpful, please give it a star on the marketplace — it helps others discover it and keeps the project going.

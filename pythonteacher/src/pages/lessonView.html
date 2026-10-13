@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lesson</title>
+    <style>
+      :root {
+        --bg: var(--vscode-editor-background);
+        --fg: var(--vscode-foreground);
+        --border: var(--vscode-panel-border);
+        --accent: var(--vscode-textLink-foreground);
+        --code-bg: var(--vscode-textCodeBlock-background);
+        --hover: var(--vscode-list-hoverBackground);
+        --success: #4caf50;
+        --warning: #ff9800;
+      }
+
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: var(--bg);
+        color: var(--fg);
+        line-height: 1.7;
+        font-size: 14px;
+        padding: 24px;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      [dir="rtl"] { direction: rtl; text-align: right; }
+      [dir="ltr"] { direction: ltr; text-align: left; }
+
+      .lesson-header {
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid var(--border);
+      }
+
+      .lesson-icon {
+        font-size: 36px;
+        margin-bottom: 8px;
+      }
+
+      .lesson-title {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+
+      .lesson-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        gap: 8px;
+      }
+
+      .nav-btn {
+        padding: 6px 14px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--fg);
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: all 0.2s;
+        white-space: nowrap;
+      }
+
+      .nav-btn:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+
+      .nav-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      .content-section {
+        margin-bottom: 20px;
+      }
+
+      .content-text {
+        margin-bottom: 16px;
+        opacity: 0.9;
+      }
+
+      .content-heading {
+        font-size: 18px;
+        font-weight: 600;
+        margin: 20px 0 10px;
+        color: var(--accent);
+      }
+
+      .code-block {
+        background: var(--code-bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 16px;
+        margin: 12px 0;
+        overflow-x: auto;
+        font-family: 'Fira Code', 'Cascadia Code', 'JetBrains Mono', monospace;
+        font-size: 13px;
+        line-height: 1.6;
+        position: relative;
+      }
+
+      .code-block pre {
+        margin: 0;
+        white-space: pre;
+      }
+
+      .code-lang {
+        position: absolute;
+        top: 6px;
+        inset-inline-end: 10px;
+        font-size: 10px;
+        opacity: 0.4;
+        text-transform: uppercase;
+      }
+
+      .content-list {
+        margin: 8px 0 16px 20px;
+      }
+
+      [dir="rtl"] .content-list {
+        margin: 8px 20px 16px 0;
+      }
+
+      .content-list li {
+        margin-bottom: 6px;
+      }
+
+      .practice-section {
+        margin-top: 32px;
+        padding-top: 20px;
+        border-top: 2px solid var(--border);
+      }
+
+      .practice-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        color: var(--warning);
+      }
+
+      .practice-item {
+        background: var(--code-bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 14px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .practice-item:hover {
+        border-color: var(--accent);
+        transform: translateY(-1px);
+      }
+
+      .practice-item-title {
+        font-weight: 500;
+        margin-bottom: 4px;
+      }
+
+      .practice-item-desc {
+        font-size: 12px;
+        opacity: 0.7;
+      }
+
+      .start-practice-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 11px;
+        margin-top: 4px;
+      }
+
+      .start-practice-btn:hover {
+        opacity: 0.9;
+      }
+
+      .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--fg);
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 12px;
+        margin-bottom: 16px;
+        transition: all 0.2s;
+      }
+
+      .back-btn:hover {
+        background: var(--hover);
+      }
+
+      .progress-indicator {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        opacity: 0.6;
+      }
+
+      .progress-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--border);
+      }
+
+      .progress-dot.active {
+        background: var(--accent);
+      }
+
+      .progress-dot.completed {
+        background: var(--success);
+      }
+
+      ::-webkit-scrollbar { width: 6px; height: 6px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    </style>
+  </head>
+  <body>
+    <div id="lessonContent"></div>
+
+    <script>
+      const vscode = acquireVsCodeApi();
+      let currentLocale = 'en';
+      let lessonData = null;
+
+      const translations = {
+        en: {
+          practice: 'Practice Exercises',
+          startPractice: 'Start Practice',
+          backToLessons: 'Back to Lessons',
+          previous: 'Previous',
+          next: 'Next',
+          lesson: 'Lesson',
+          of: 'of',
+          clickToPractice: 'Click to start this exercise',
+        },
+        fa: {
+          practice: 'تمرین‌های عملی',
+          startPractice: 'شروع تمرین',
+          backToLessons: 'بازگشت به درس‌ها',
+          previous: 'قبلی',
+          next: 'بعدی',
+          lesson: 'درس',
+          of: 'از',
+          clickToPractice: 'برای شروع این تمرین کلیک کنید',
+        },
+      };
+
+      function t(key) {
+        return translations[currentLocale]?.[key] || key;
+      }
+
+      function setLanguage(locale) {
+        currentLocale = locale;
+        document.documentElement.lang = locale;
+        document.body.setAttribute('dir', locale === 'fa' ? 'rtl' : 'ltr');
+        if (lessonData) renderLesson();
+      }
+
+      function renderLesson() {
+        if (!lessonData) return;
+        const container = document.getElementById('lessonContent');
+        const content = currentLocale === 'fa' && lessonData.contentFa ? lessonData.contentFa : lessonData.contentEn;
+
+        let html = '';
+
+        html += '<button class="back-btn" onclick="goBack()">';
+        html += currentLocale === 'fa' ? '→ بازگشت به درس‌ها' : '← Back to Lessons';
+        html += '</button>';
+
+        html += '<div class="lesson-header">';
+        html += '<div class="lesson-icon">' + (lessonData.icon || '📘') + '</div>';
+        html += '<div class="lesson-title">' + (currentLocale === 'fa' && lessonData.titleFa ? lessonData.titleFa : lessonData.titleEn) + '</div>';
+        html += '</div>';
+
+        html += '<div class="lesson-nav">';
+        html += '<button class="nav-btn" onclick="navigate(-1)" ' + (lessonData.prevDisabled ? 'disabled' : '') + '>';
+        html += '← ' + t('previous');
+        html += '</button>';
+        html += '<div class="progress-indicator">';
+        for (let i = 0; i < lessonData.totalLessons; i++) {
+          const cls = i === lessonData.currentIndex ? 'active' : (i < lessonData.currentIndex ? 'completed' : '');
+          html += '<div class="progress-dot ' + cls + '"></div>';
+        }
+        html += '</div>';
+        html += '<button class="nav-btn" onclick="navigate(1)" ' + (lessonData.nextDisabled ? 'disabled' : '') + '>';
+        html += t('next') + ' →';
+        html += '</button>';
+        html += '</div>';
+
+        for (const section of content) {
+          if (section.type === 'text') {
+            html += '<div class="content-text">' + escapeHtml(section.text) + '</div>';
+          } else if (section.type === 'heading') {
+            html += '<div class="content-heading">' + escapeHtml(section.text) + '</div>';
+          } else if (section.type === 'code') {
+            html += '<div class="code-block"><span class="code-lang">python</span><pre>' + escapeHtml(section.code) + '</pre></div>';
+          } else if (section.type === 'list') {
+            html += '<ul class="content-list">';
+            for (const item of section.items) {
+              html += '<li>' + escapeHtml(item) + '</li>';
+            }
+            html += '</ul>';
+          }
+        }
+
+        if (lessonData.practice && lessonData.practice.length > 0) {
+          html += '<div class="practice-section">';
+          html += '<div class="practice-title">' + t('practice') + '</div>';
+          for (let i = 0; i < lessonData.practice.length; i++) {
+            const p = lessonData.practice[i];
+            const pTitle = currentLocale === 'fa' && p.questionFa ? p.questionFa : p.question;
+            html += '<div class="practice-item" onclick="startPractice(' + i + ')">';
+            html += '<div class="practice-item-title">' + escapeHtml(pTitle) + '</div>';
+            html += '<div class="practice-item-desc">' + t('clickToPractice') + '</div>';
+            html += '<button class="start-practice-btn">' + t('startPractice') + ' →</button>';
+            html += '</div>';
+          }
+          html += '</div>';
+        }
+
+        container.innerHTML = html;
+      }
+
+      function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      function goBack() {
+        vscode.postMessage({ command: 'goBack' });
+      }
+
+      function navigate(dir) {
+        vscode.postMessage({ command: 'navigate', direction: dir });
+      }
+
+      function startPractice(index) {
+        vscode.postMessage({ command: 'startPractice', practiceIndex: index });
+      }
+
+      window.addEventListener('message', (event) => {
+        const message = event.data;
+        if (message.command === 'showLesson') {
+          lessonData = message.lesson;
+          currentLocale = message.locale || 'en';
+          document.documentElement.lang = currentLocale;
+          document.body.setAttribute('dir', currentLocale === 'fa' ? 'rtl' : 'ltr');
+          renderLesson();
+        }
+      });
+
+      vscode.postMessage({ command: 'requestLesson' });
+    </script>
+  </body>
+</html>

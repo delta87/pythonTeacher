@@ -1,29 +1,60 @@
-
 const { spawn } = require('child_process');
 
-function runPythonCode(code, callback) {
-    const pythonProcess = spawn('python', ['-c', code]);
+// Detects available Python interpreter, preferring python3 over python
+function getPythonCommand() {
+    const { execSync } = require('child_process');
+    try {
+        execSync('python3 --version', { stdio: 'ignore' });
+        return 'python3';
+    } catch {
+        try {
+            execSync('python --version', { stdio: 'ignore' });
+            return 'python';
+        } catch {
+            return null;
+        }
+    }
+}
 
+function runPythonCode(code, callback, timeoutMs = 10000) {
+    const pythonCmd = getPythonCommand();
+    if (!pythonCmd) {
+        callback(1, 'Python is not installed or not found in PATH');
+        return;
+    }
+
+    const pythonProcess = spawn(pythonCmd, ['-c', code]);
     let output = '';
     let error = '';
+    let timedOut = false;
 
-    // Capture stdout
+    const timer = setTimeout(() => {
+        timedOut = true;
+        pythonProcess.kill();
+    }, timeoutMs);
+
     pythonProcess.stdout.on('data', (data) => {
         output += data.toString();
     });
 
-    // Capture stderr
     pythonProcess.stderr.on('data', (data) => {
         error += data.toString();
     });
 
-    // Handle process completion
     pythonProcess.on('close', (code) => {
-        if (code === 0) {
-            callback(0, output.trim()); // Success
+        clearTimeout(timer);
+        if (timedOut) {
+            callback(1, 'Execution timed out');
+        } else if (code === 0) {
+            callback(0, output.trim());
         } else {
-            callback(1, error.trim()); // Failure
+            callback(1, error.trim());
         }
+    });
+
+    pythonProcess.on('error', (err) => {
+        clearTimeout(timer);
+        callback(1, err.message);
     });
 }
 

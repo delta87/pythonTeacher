@@ -9,10 +9,11 @@ const { t, setLocale, getLocale } = require('./src/i18n');
 function activate(context) {
     const progress = new ProgressTracker(context);
     const documentLessonMap = new Map();
-    const lessonView = new LessonViewProvider(context);
+    const sideBarProvider = new SideBarViewProvider(context);
+    const lessonView = new LessonViewProvider(context, () => refreshSidebar());
 
     context.subscriptions.push(
-        vscode.window.registerWebviewViewProvider('pythonTeacherView', new SideBarViewProvider(context))
+        vscode.window.registerWebviewViewProvider('pythonTeacherView', sideBarProvider)
     );
 
     context.subscriptions.push(
@@ -126,8 +127,8 @@ function activate(context) {
             validateFn(code, (score) => {
                 if (score === 100) {
                     vscode.window.showInformationMessage(`✅ ${t('perfect')} ${score}/100`);
-                    if (docInfo && docInfo.type === 'lesson') {
-                        progress.completeLesson(lessonId, score);
+                    if (docInfo && (docInfo.type === 'lesson' || docInfo.type === 'practice')) {
+                        progress.markDone(lessonId);
                         refreshSidebar();
                     }
                 } else if (score > 0 && score < 100) {
@@ -142,27 +143,22 @@ function activate(context) {
     }
 
     function refreshSidebar() {
-        vscode.commands.executeCommand('pythonteacher.refreshSidebar');
+        sideBarProvider.refresh();
     }
 
-    vscode.window.onDidChangeActiveTextEditor(editor => {
-        if (editor) {
-            const docInfo = documentLessonMap.get(editor.document.uri.toString());
-            if (docInfo) {
-                showValidationButton(docInfo.lessonId, docInfo.practiceIndex);
-            } else if (currentValidationButton) {
-                currentValidationButton.hide();
-            }
-        }
-    });
-
-    context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor);
-
     context.subscriptions.push(
-        vscode.commands.registerCommand('pythonteacher.refreshSidebar', () => {
-            vscode.commands.executeCommand('workbench.view.extension.pythonTeacherSidebar');
+        vscode.window.onDidChangeActiveTextEditor(editor => {
+            if (editor) {
+                const docInfo = documentLessonMap.get(editor.document.uri.toString());
+                if (docInfo) {
+                    showValidationButton(docInfo.lessonId, docInfo.practiceIndex);
+                } else if (currentValidationButton) {
+                    currentValidationButton.hide();
+                }
+            }
         })
     );
+
 }
 
 function deactivate() {}

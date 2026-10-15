@@ -1,8 +1,10 @@
 {
     "name": "pythonteacher",
+    "publisher": "PythonTeacher",
     "displayName": "Python Teacher",
     "description": "The Python Teacher extension is your personal guide to mastering Python within Visual Studio Code. Perfect for beginners and intermediate learners alike, this extension brings interactive lessons, code challenges, and real-time feedback right to your editor.",
     "version": "2.0.0",
+    "icon": "icon.png",
     "engines": {
         "vscode": "^1.94.0"
     },

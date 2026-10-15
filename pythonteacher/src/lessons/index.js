@@ -88,20 +88,11 @@ function getPreviousLesson(id) {
     return idx > 0 ? all[idx - 1] : null;
 }
 
-function isLessonUnlocked(lessonId, completedLessons) {
-    const all = getAllLessons();
-    const idx = getLessonIndex(lessonId);
-    if (idx <= 0) return true;
-    const prev = all[idx - 1];
-    return !!completedLessons[prev.id];
-}
-
 module.exports = {
     getAllLessons,
     getLesson,
     getCategories,
     getNextLesson,
     getPreviousLesson,
-    isLessonUnlocked,
     categories,
 };

@@ -1,5 +1,12 @@
-// Persists lesson completion and scores across VS Code sessions via globalState
+// Persists per-lesson status across VS Code sessions via globalState.
+// Status values: 'done' | 'in-progress' | 'not-started' (default)
 const STORAGE_KEY = 'pythonteacher.progress';
+
+const STATUS = {
+    DONE: 'done',
+    IN_PROGRESS: 'in-progress',
+    NOT_STARTED: 'not-started',
+};
 
 class ProgressTracker {
     constructor(context) {
@@ -9,53 +16,63 @@ class ProgressTracker {
 
     load() {
         const saved = this.context.globalState.get(STORAGE_KEY);
-        if (saved) {
+        if (saved && saved.lessons) {
             return saved;
         }
-        return { completedLessons: {}, scores: {}, currentLesson: null };
+
+        // Migrate the older shape ({ completedLessons }) if present.
+        const migrated = { lessons: {} };
+        if (saved && saved.completedLessons) {
+            for (const lessonId of Object.keys(saved.completedLessons)) {
+                migrated.lessons[lessonId] = STATUS.DONE;
+            }
+        }
+        return migrated;
+    }
+
+    // Re-read from globalState so multiple providers stay in sync.
+    reload() {
+        this.data = this.load();
     }
 
     save() {
         this.context.globalState.update(STORAGE_KEY, this.data);
     }
 
-    isCompleted(lessonId) {
-        return !!this.data.completedLessons[lessonId];
+    getStatus(lessonId) {
+        return this.data.lessons[lessonId] || STATUS.NOT_STARTED;
     }
 
-    completeLesson(lessonId, score) {
-        this.data.completedLessons[lessonId] = {
-            score,
-            completedAt: Date.now(),
-        };
-        if (!this.data.scores[lessonId] || score > this.data.scores[lessonId]) {
-            this.data.scores[lessonId] = score;
+    isDone(lessonId) {
+        return this.getStatus(lessonId) === STATUS.DONE;
+    }
+
+    markInProgress(lessonId) {
+        this.reload();
+        if (this.data.lessons[lessonId] !== STATUS.DONE) {
+            this.data.lessons[lessonId] = STATUS.IN_PROGRESS;
+            this.save();
         }
+    }
+
+    markDone(lessonId) {
+        this.reload();
+        this.data.lessons[lessonId] = STATUS.DONE;
         this.save();
     }
 
-    getScore(lessonId) {
-        return this.data.scores[lessonId] || 0;
-    }
-
-    getCurrentLesson() {
-        return this.data.currentLesson;
-    }
-
-    setCurrentLesson(lessonId) {
-        this.data.currentLesson = lessonId;
+    setStatus(lessonId, status) {
+        this.reload();
+        this.data.lessons[lessonId] = status;
         this.save();
-    }
-
-    getOverallProgress(totalLessons) {
-        const completed = Object.keys(this.data.completedLessons).length;
-        return totalLessons > 0 ? Math.round((completed / totalLessons) * 100) : 0;
     }
 
     reset() {
-        this.data = { completedLessons: {}, scores: {}, currentLesson: null };
+        this.data = { lessons: {} };
         this.save();
     }
 }
+
+ProgressTracker.STATUS = STATUS;
 
 module.exports = ProgressTracker;

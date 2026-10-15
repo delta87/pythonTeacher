@@ -1,7 +1,7 @@
 const runPythonCode = require('../../src/pythonRunner');
 
 module.exports = {
-    id: 'data_types',
+    id: 'dataTypes',
     titleKey: 'lessons.dataTypes.title',
     descriptionKey: 'lessons.dataTypes.description',
     question: "Define variables 'a' as an integer, 'b' as a float, 'c' as a string, and 'd' as a boolean.",

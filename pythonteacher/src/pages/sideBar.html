@@ -88,47 +88,6 @@
         background: var(--hover);
       }
 
-      .progress-section {
-        margin-bottom: 16px;
-        padding: 12px;
-        background: var(--card-bg);
-        border-radius: 8px;
-        border: 1px solid var(--border);
-      }
-
-      .progress-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 8px;
-      }
-
-      .progress-label {
-        font-size: 12px;
-        font-weight: 500;
-        opacity: 0.8;
-      }
-
-      .progress-value {
-        font-size: 12px;
-        font-weight: 600;
-        color: var(--accent);
-      }
-
-      .progress-bar {
-        height: 6px;
-        background: var(--border);
-        border-radius: 3px;
-        overflow: hidden;
-      }
-
-      .progress-fill {
-        height: 100%;
-        background: linear-gradient(90deg, var(--accent), #2196f3);
-        border-radius: 3px;
-        transition: width 0.5s ease;
-      }
-
       .category {
         margin-bottom: 16px;
       }
@@ -157,22 +116,17 @@
         overflow: hidden;
       }
 
-      .lesson-card:hover:not(.locked) {
+      .lesson-card:hover {
         border-color: var(--accent);
         transform: translateY(-1px);
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
       }
 
-      .lesson-card.locked {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-
-      .lesson-card.completed {
+      .lesson-card.done {
         border-left: 3px solid var(--success);
       }
 
-      [dir="rtl"] .lesson-card.completed {
+      [dir="rtl"] .lesson-card.done {
         border-left: none;
         border-right: 3px solid var(--success);
       }
@@ -189,16 +143,19 @@
         flex-shrink: 0;
       }
 
-      .lesson-icon.completed {
+      .lesson-icon.done {
         background: rgba(76, 175, 80, 0.15);
+        color: var(--success);
       }
 
       .lesson-icon.in-progress {
         background: rgba(33, 150, 243, 0.15);
+        color: #2196f3;
       }
 
-      .lesson-icon.locked {
+      .lesson-icon.not-started {
         background: rgba(102, 102, 102, 0.15);
+        color: var(--locked);
       }
 
       .lesson-info {
@@ -230,7 +187,7 @@
         flex-shrink: 0;
       }
 
-      .lesson-status.completed {
+      .lesson-status.done {
         background: rgba(76, 175, 80, 0.15);
         color: var(--success);
       }
@@ -240,7 +197,7 @@
         color: #2196f3;
       }
 
-      .lesson-status.locked {
+      .lesson-status.not-started {
         background: rgba(102, 102, 102, 0.15);
         color: var(--locked);
       }
@@ -319,16 +276,6 @@
       </div>
     </div>
 
-    <div class="progress-section">
-      <div class="progress-header">
-        <span class="progress-label" id="progressLabel">Progress</span>
-        <span class="progress-value" id="progressValue">0%</span>
-      </div>
-      <div class="progress-bar">
-        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
-      </div>
-    </div>
-
     <div id="lessonsContainer"></div>
 
     <button class="reset-btn" id="resetBtn" onclick="resetProgress()">Reset Progress</button>
@@ -339,11 +286,9 @@
 
       const translations = {
         en: {
-          progress: 'Progress',
           completed: 'Completed',
           notStarted: 'Not started',
           inProgress: 'In progress',
-          locked: 'Locked',
           practice: 'Practice',
           resetProgress: 'Reset Progress',
           resetConfirm: 'Are you sure you want to reset all progress?',
@@ -488,14 +433,7 @@
         if (!data || !data.categories) return;
 
         document.getElementById('sidebarTitle').textContent = currentLocale === 'fa' ? 'معلم پایتون' : 'Python Teacher';
-        document.getElementById('progressLabel').textContent = t('progress');
         document.getElementById('resetBtn').textContent = t('resetProgress');
-
-        const totalLessons = data.allLessons.length;
-        const completedCount = Object.keys(data.completedLessons || {}).length;
-        const pct = totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
-        document.getElementById('progressValue').textContent = pct + '%';
-        document.getElementById('progressFill').style.width = pct + '%';
 
         const container = document.getElementById('lessonsContainer');
         container.innerHTML = '';
@@ -510,13 +448,12 @@
           catDiv.appendChild(catTitle);
 
           for (const lesson of cat.lessons) {
-            const isCompleted = data.completedLessons && data.completedLessons[lesson.id];
-            const isUnlocked = data.unlockedLessons && data.unlockedLessons[lesson.id];
-            const status = isCompleted ? 'completed' : (isUnlocked ? 'in-progress' : 'locked');
-            const icon = isCompleted ? '✓' : (isUnlocked ? '▶' : '🔒');
+            const status = (data.lessonStatus && data.lessonStatus[lesson.id]) || 'not-started';
+            const icon = status === 'done' ? '✓' : (status === 'in-progress' ? '▶' : '○');
 
             const card = document.createElement('div');
             card.className = 'lesson-card ' + status;
+            card.onclick = () => openLesson(lesson.id);
 
             const iconDiv = document.createElement('div');
             iconDiv.className = 'lesson-icon ' + status;
@@ -540,19 +477,8 @@
 
             const statusSpan = document.createElement('span');
             statusSpan.className = 'lesson-status ' + status;
-            statusSpan.textContent = t(status === 'completed' ? 'completed' : status === 'in-progress' ? 'inProgress' : 'locked');
+            statusSpan.textContent = t(status === 'done' ? 'completed' : (status === 'in-progress' ? 'inProgress' : 'notStarted'));
             card.appendChild(statusSpan);
-
-            if (isCompleted && data.scores && data.scores[lesson.id]) {
-              const scoreSpan = document.createElement('span');
-              scoreSpan.className = 'score-display';
-              scoreSpan.textContent = data.scores[lesson.id] + '%';
-              card.appendChild(scoreSpan);
-            }
-
-            if (isUnlocked) {
-              card.onclick = () => openLesson(lesson.id);
-            }
 
             catDiv.appendChild(card);
           }

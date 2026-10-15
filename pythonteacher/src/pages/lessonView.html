@@ -106,11 +106,18 @@
         font-size: 13px;
         line-height: 1.6;
         position: relative;
+        /* Code must always read left-to-right, even in RTL (Persian) mode */
+        direction: ltr;
+        text-align: left;
+        unicode-bidi: plaintext;
       }
 
       .code-block pre {
         margin: 0;
         white-space: pre;
+        direction: ltr;
+        text-align: left;
+        unicode-bidi: plaintext;
       }
 
       .code-lang {
@@ -209,6 +216,63 @@
         background: var(--hover);
       }
 
+      .lesson-meta {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 8px;
+        flex-wrap: wrap;
+      }
+
+      .status-badge {
+        font-size: 11px;
+        font-weight: 500;
+        padding: 3px 10px;
+        border-radius: 10px;
+        text-transform: capitalize;
+      }
+
+      .status-badge.done {
+        background: rgba(76, 175, 80, 0.15);
+        color: var(--success);
+      }
+
+      .status-badge.in-progress {
+        background: rgba(33, 150, 243, 0.15);
+        color: #2196f3;
+      }
+
+      .status-badge.not-started {
+        background: rgba(102, 102, 102, 0.15);
+        color: var(--fg);
+        opacity: 0.7;
+      }
+
+      .mark-read-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 12px;
+        border: 1px solid var(--success);
+        background: transparent;
+        color: var(--success);
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: all 0.2s;
+      }
+
+      .mark-read-btn:hover:not(:disabled) {
+        background: rgba(76, 175, 80, 0.15);
+      }
+
+      .mark-read-btn:disabled {
+        border-color: var(--border);
+        color: var(--fg);
+        opacity: 0.6;
+        cursor: default;
+      }
+
       .progress-indicator {
         display: flex;
         align-items: center;
@@ -255,6 +319,11 @@
           lesson: 'Lesson',
           of: 'of',
           clickToPractice: 'Click to start this exercise',
+          markAsRead: 'Mark as Read',
+          markedAsRead: '✓ Read',
+          statusDone: 'Done',
+          statusInProgress: 'In Progress',
+          statusNotStarted: 'Not Started',
         },
         fa: {
           practice: 'تمرین‌های عملی',
@@ -265,6 +334,11 @@
           lesson: 'درس',
           of: 'از',
           clickToPractice: 'برای شروع این تمرین کلیک کنید',
+          markAsRead: 'علامت‌گذاری به عنوان خوانده‌شده',
+          markedAsRead: '✓ خوانده شد',
+          statusDone: 'انجام شده',
+          statusInProgress: 'در حال انجام',
+          statusNotStarted: 'شروع نشده',
         },
       };
 
@@ -290,13 +364,22 @@
         html += currentLocale === 'fa' ? '→ بازگشت به درس‌ها' : '← Back to Lessons';
         html += '</button>';
 
+        const status = lessonData.status || 'not-started';
+        const statusText = status === 'done' ? t('statusDone') : (status === 'in-progress' ? t('statusInProgress') : t('statusNotStarted'));
+
         html += '<div class="lesson-header">';
         html += '<div class="lesson-icon">' + (lessonData.icon || '📘') + '</div>';
         html += '<div class="lesson-title">' + (currentLocale === 'fa' && lessonData.titleFa ? lessonData.titleFa : lessonData.titleEn) + '</div>';
+        html += '<div class="lesson-meta">';
+        html += '<span class="status-badge ' + status + '">' + statusText + '</span>';
+        html += '<button class="mark-read-btn" onclick="markRead()" ' + (status === 'done' ? 'disabled' : '') + '>';
+        html += (status === 'done' ? t('markedAsRead') : t('markAsRead'));
+        html += '</button>';
+        html += '</div>';
         html += '</div>';
 
         html += '<div class="lesson-nav">';
-        html += '<button class="nav-btn" onclick="navigate(-1)" ' + (lessonData.prevDisabled ? 'disabled' : '') + '>';
+        html += '<button class="nav-btn" onclick="navigate(-1)">';
         html += '← ' + t('previous');
         html += '</button>';
         html += '<div class="progress-indicator">';
@@ -305,7 +388,7 @@
           html += '<div class="progress-dot ' + cls + '"></div>';
         }
         html += '</div>';
-        html += '<button class="nav-btn" onclick="navigate(1)" ' + (lessonData.nextDisabled ? 'disabled' : '') + '>';
+        html += '<button class="nav-btn" onclick="navigate(1)">';
         html += t('next') + ' →';
         html += '</button>';
         html += '</div>';
@@ -360,6 +443,10 @@
 
       function startPractice(index) {
         vscode.postMessage({ command: 'startPractice', practiceIndex: index });
+      }
+
+      function markRead() {
+        vscode.postMessage({ command: 'markRead' });
       }
 
       window.addEventListener('message', (event) => {

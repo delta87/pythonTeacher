@@ -9,9 +9,17 @@ class SideBarViewProvider {
     constructor(context) {
         this.context = context;
         this.progress = new ProgressTracker(context);
+        this.webviewView = null;
+    }
+
+    refresh() {
+        if (this.webviewView) {
+            this.updateWebviewState(this.webviewView);
+        }
     }
 
     resolveWebviewView(webviewView) {
+        this.webviewView = webviewView;
         webviewView.webview.options = {
             enableScripts: true,
             localResourceRoots: [vscode.Uri.file(path.join(this.context.extensionPath, 'src', 'pages'))],
@@ -47,30 +55,20 @@ class SideBarViewProvider {
     }
 
     updateWebviewState(webviewView) {
-        const categories = lessonRegistry.getCategories();
-        const completedLessons = this.progress.data.completedLessons;
-        const scores = this.progress.data.scores;
-        const allLessons = lessonRegistry.getAllLessons();
+        // Re-read from globalState so changes made by the lesson view are
+        // reflected immediately instead of using a stale in-memory snapshot.
+        this.progress.reload();
 
-        const unlockedLessons = {};
-        for (const lesson of allLessons) {
-            const idx = allLessons.indexOf(lesson);
-            if (idx <= 0) {
-                unlockedLessons[lesson.id] = true;
-            } else {
-                const prev = allLessons[idx - 1];
-                unlockedLessons[lesson.id] = !!completedLessons[prev.id];
-            }
-        }
+        const categories = lessonRegistry.getCategories();
+        const allLessons = lessonRegistry.getAllLessons();
+        const lessonStatus = this.progress.data.lessons || {};
 
         webviewView.webview.postMessage({
             command: 'updateState',
             state: {
                 categories,
-                completedLessons,
-                unlockedLessons,
-                scores,
                 allLessons,
+                lessonStatus,
             },
         });
     }
